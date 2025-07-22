@@ -19,7 +19,7 @@ const app = express();
 app.use(cors);
 
 app.get("/getProfile", authenticate, async (req, res) => {
-    await new Promise((resolve) => authenticate(req, res, resolve))
+    // await new Promise((resolve) => authenticate(req, res, resolve))
     if (!req.user) {
         res.status(401).json({
             error: "Unauthorized"
@@ -43,4 +43,40 @@ app.get("/getProfile", authenticate, async (req, res) => {
     })
 })
 
+app.get('/getPhotos', authenticate, async (req, res) => {
+  const db = getFirestore();
+  const userRef = db.collection('users').doc(req.user.uid);
+  const userDoc = await userRef.get();
+
+  if (!userDoc.exists) {
+    // Create user doc with empty photos array
+    await userRef.set({ photos: [] });
+    return res.status(200).json({ photos: [] });
+  }
+
+  let userData = userDoc.data();
+  if (!userData.photos) {
+    // Set empty photos array if not present
+    await userRef.update({ photos: [] });
+    return res.status(200).json({ photos: [] });
+  }
+
+  return res.status(200).json({ photos: userData.photos });
+});
+
 exports.api = onRequest(app);
+
+
+
+// users (collection)
+//   └── {userId} (document)
+//         ├── displayName, email, ...
+//         └── photos (subcollection)
+//               └── {photoId} (document)
+//                     ├── photoURL
+//                     ├── type: "user" | "generated"
+//                     ├── createdAt
+//                     └── generatedPhotos (subcollection)
+//                           └── {generatedPhotoId} (document)
+//                                 ├── photoURL
+//                                 ├── createdAt
