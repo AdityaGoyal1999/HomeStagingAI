@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import axios from "axios"
 import { auth } from "../firebase"
 import { Box, Flex, Button, Text, Avatar } from "@chakra-ui/react"
+import Sidebar from "./Sidebar";
+import HomeContent from "./HomeContent";
 
 export default function Home() {
 
@@ -75,8 +77,8 @@ export default function Home() {
                     <Box display="flex" alignItems="center" gap={4}>
                         <Flex align="center" gap={4}>
                             <Avatar.Root size="sm" key="sm">
-                                <Avatar.Fallback name="Segun Adebayo" />
-                                <Avatar.Image src="https://bit.ly/sage-adebayo" />
+                                <Avatar.Fallback name={user.name} />
+                                <Avatar.Image src={user.photoURL} />
                             </Avatar.Root>
                         </Flex>
                         <Button colorScheme="blue" variant="outline" onClick={handleLogout}>
@@ -86,17 +88,13 @@ export default function Home() {
                 </Flex>
             </Box>
 
-            
-            <Box pt={24} px={8}>
-                <h2>You are logged in</h2>
-                <p>User: {user.email}</p>
-                <h3>Photos</h3>
-                <div>
-                    {photos.map((photo) => (
-                        <img src={photo.photoURL} alt="Photo" />
-                    ))}
-                </div>
-            </Box>
+            {/* Content Section */}
+            <Flex pt={24} px={0}>
+                <Sidebar />
+                <Box flex={1} px={{ base: 4, md: 8 }} ml={{ base: 0, md: 60 }}>
+                    <HomeContent user={user} photos={photos} />
+                </Box>
+            </Flex>
         </>
     )
 }
