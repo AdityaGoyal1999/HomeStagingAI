@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { auth } from "../firebase"
 import { handleLogin, handleSignUp } from "../auth/authentication"
 import { useNavigate } from "react-router-dom"
+import { Button, HStack, Box, Input } from "@chakra-ui/react"
 
 export default function Login() {
 
@@ -42,34 +43,52 @@ export default function Login() {
     }
 
     return (
-        <div>
+        <Box
+            bg="gray.100"
+            boxShadow="lg"
+            borderRadius="lg"
+            p={8}
+            maxW="sm"
+            mx="auto"
+            mt={24}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+        >
             {
                 signIn?
                     <h2>Sign In</h2> :
                     <h2>Sign Up</h2>
             }
             <p style={{ color: "red" }}>{error}</p>
-            <input 
+            <Input
                 type="email"
                 placeholder="Email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
+                bg="white"
+                width="100%"
+                mb={3}
             />
-            <br />
-            <input 
+            <Input
                 type="password"
                 placeholder="Password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
+                bg="white"
+                width="100%"
+                mb={3}
             />
-            <br />
             {
                 signIn?
-                    <button onClick={manageLogin}>Sign In</button> :
-                    <button onClick={manageSignUp}>Sign Up</button>
+                    <Button colorScheme="blue" width="100%" mt={2} onClick={manageLogin}>Sign In</Button> :
+                    <Button colorScheme="blue" width="100%" mt={2} onClick={manageSignUp}>Sign Up</Button>
             }
             <br />
-            <button onClick={() => setSignIn(prev => !prev)}>Switch to {signIn ? "Sign Up" : "Sign In"}</button>
-        </div>
+            <Button variant="outline" colorScheme="blue" width="100%" mt={2} onClick={() => setSignIn(prev => !prev)}>
+                Switch to {signIn ? "Sign Up" : "Sign In"}
+            </Button>
+        </Box>
     )
 }

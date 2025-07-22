@@ -4,10 +4,15 @@ import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext'
 
+// Provided by ChakraUI
+import { Provider } from "@/components/ui/provider"
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-      <App />
+      <Provider>
+        <App />
+      </Provider>
     </AuthProvider>
   </StrictMode>,
 )
