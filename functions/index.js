@@ -7,20 +7,40 @@ const {onDocumentCreated} = require("firebase-functions/v2/firestore");
 const {initializeApp} = require("firebase-admin/app");
 const {getFirestore} = require("firebase-admin/firestore");
 
+const { authenticate } = require("./middleware/authentication");
+
+const express = require("express");
+const cors = require("cors")({origin: true});
+
 initializeApp();
 
+const app = express();
 
-exports.sayHello = onRequest((req, res) => {
-    const name = req.query.name;
+app.use(cors);
 
-    if (!name) {
-        res.status(400).json({
-            error: "Missing 'name' query parameter"
+app.get("/getProfile", authenticate, async (req, res) => {
+    await new Promise((resolve) => authenticate(req, res, resolve))
+    if (!req.user) {
+        res.status(401).json({
+            error: "Unauthorized"
+        })
+        return;
+    }
+
+    const db = getFirestore();
+    const userRef = db.collection("users").doc(req.user.uid);
+    const doc = await userRef.get()
+
+    if (!doc.exists) {
+        res.status(404).json({
+            error: "User not found"
         })
         return;
     }
 
     res.status(200).json({
-        "message": `Hello ${name}`
+        "user": doc.data()
     })
 })
+
+exports.api = onRequest(app);

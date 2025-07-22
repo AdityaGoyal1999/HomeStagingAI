@@ -1,11 +1,23 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "../firebase"
+import { db } from "../firebase"
+import { setDoc, doc } from "firebase/firestore"
 
 const handleSignUp = async (email, password) => {
     try {
-        console.log(email, password)
         const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-        return userCredential.user;
+        const newUser = userCredential.user;
+
+        // create user profile in firestore
+        await setDoc(doc(db, "users", newUser.uid), {
+            email: newUser.email,
+            name: newUser.displayName,
+            photoURL: newUser.photoURL,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        })
+        
+        return newUser;
     }
     catch(error) {
         console.error('Error', error.message)
@@ -16,7 +28,6 @@ const handleSignUp = async (email, password) => {
 const handleLogin = async (email, password) => {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        // console.log('Logged in:', userCredential.user);
         return userCredential.user;
     } 
     catch (error) {

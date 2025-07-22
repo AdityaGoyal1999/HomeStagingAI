@@ -13,7 +13,6 @@ export default function Login() {
 
     const manageLogin = async () => {
         // e.preventDefault()
-        console.log("Coming here")
         setError("")
         if (email && password) {
             const user = await handleLogin(email, password)
@@ -49,6 +48,7 @@ export default function Login() {
                     <h2>Sign In</h2> :
                     <h2>Sign Up</h2>
             }
+            <p style={{ color: "red" }}>{error}</p>
             <input 
                 type="email"
                 placeholder="Email"
