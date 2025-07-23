@@ -1,5 +1,6 @@
 // import { useState } from "react";
-import { Box, VStack, useDisclosure} from "@chakra-ui/react";
+import { Box, VStack, Button, Drawer, Portal } from "@chakra-ui/react";
+import { CloseButton } from "@chakra-ui/react";
 // import { HamburgerIcon } from "@chakra-ui/icons";
 
 export default function Sidebar() {
@@ -39,8 +40,35 @@ export default function Sidebar() {
 //   }
 
   return (
-    <Box position="fixed" left={0} top={20} h="calc(100vh - 80px)" w={60} bg="gray.200" zIndex={110}>
-      {sidebarContent}
-    </Box>
+    <Drawer.Root placement="start">
+      <Drawer.Trigger asChild>
+        <Button variant="outline" size="sm">
+          Open Drawer
+        </Button>
+      </Drawer.Trigger>
+      <Portal>
+        <Drawer.Backdrop />
+        <Drawer.Positioner>
+          <Drawer.Content>
+            <Drawer.Header>
+              <Drawer.Title>Drawer Title</Drawer.Title>
+            </Drawer.Header>
+            <Drawer.Body>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+            </Drawer.Body>
+            <Drawer.Footer>
+              <Button variant="outline">Cancel</Button>
+              <Button>Save</Button>
+            </Drawer.Footer>
+            <Drawer.CloseTrigger asChild>
+              <CloseButton size="sm" />
+            </Drawer.CloseTrigger>
+          </Drawer.Content>
+        </Drawer.Positioner>
+      </Portal>
+    </Drawer.Root>
   );
 } 
