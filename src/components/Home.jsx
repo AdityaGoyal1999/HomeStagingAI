@@ -92,7 +92,7 @@ export default function Home() {
             <Flex pt={24} px={0}>
                 <Sidebar />
                 <Box flex={1} px={{ base: 4, md: 8 }} ml={{ base: 0, md: 60 }}>
-                    <HomeContent user={user} photos={photos} />
+                    <HomeContent user={user} photos={photos} setPhotos={setPhotos} />
                 </Box>
             </Flex>
         </>
