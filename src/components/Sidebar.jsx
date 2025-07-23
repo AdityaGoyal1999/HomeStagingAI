@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Box, Flex, VStack, Text, IconButton, Avatar, Button } from "@chakra-ui/react";
 import { handleLogout } from "../auth/authentication";
 import { FiHome, FiImage, FiUser, FiSettings } from "react-icons/fi";
@@ -12,6 +13,10 @@ const navItems = [
 ];
 
 export default function Sidebar() {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const handleCollapse = () => setIsCollapsed((prev) => !prev);
+
   // const user = auth.currentUser;
   return (
     <Flex
@@ -20,7 +25,7 @@ export default function Sidebar() {
       align="center"
       bg="rgba(255,255,255,0.2)"
       boxShadow="xl"
-      width={{ base: "60px", md: "220px" }}
+      width={isCollapsed ? "60px" : { base: "60px", md: "220px" }}
       position="fixed"
       height="97vh"
       left={0}
@@ -38,11 +43,23 @@ export default function Sidebar() {
       borderRadius="2xl"
     >
       {/* Top: Logo/App Name */}
-      <Box mb={8} w="full" textAlign="center">
-        <Text fontWeight="bold" fontSize="2xl" color="blue.500" letterSpacing="wide" display={{ base: "none", md: "block" }}>
+      <Box mb={8} w="full" textAlign="center" cursor="pointer" onClick={handleCollapse}>
+        <Text
+          fontWeight="bold"
+          fontSize="2xl"
+          color="blue.500"
+          letterSpacing="wide"
+          display={isCollapsed ? "none" : { base: "none", md: "block" }}
+        >
           HomeStaging AI
         </Text>
-        <Text fontWeight="bold" fontSize="2xl" color="blue.500" letterSpacing="wide" display={{ base: "block", md: "none" }}>
+        <Text
+          fontWeight="bold"
+          fontSize="2xl"
+          color="blue.500"
+          letterSpacing="wide"
+          display={isCollapsed ? "block" : { base: "block", md: "none" }}
+        >
           HS
         </Text>
       </Box>
@@ -64,7 +81,7 @@ export default function Sidebar() {
             <Box as={item.icon} fontSize="xl" />
             <Text
               fontWeight="medium"
-              display={{ base: "none", md: "block" }}
+              display={isCollapsed ? "none" : { base: "none", md: "block" }}
             >
               {item.label}
             </Text>

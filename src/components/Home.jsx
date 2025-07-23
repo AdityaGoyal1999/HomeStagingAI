@@ -70,9 +70,9 @@ export default function Home() {
             
                 {/* Content Section */}
                 <Box
-                    ml={{ base: "60px", md: "220px" }}
-                    pt="96px" // or pt={24} if using Chakra's spacing
-                    height="calc(100vh - 96px)"
+                    ml={{ base: "60px", md: "220px" }} // or pt={24} if using Chakra's spacing
+                    mt="20px"
+                    height="calc(100vh - 20px)"
                     overflowY="auto"
                 >
                     <Box flex={1} px={{ base: 4, md: 8 }}>
