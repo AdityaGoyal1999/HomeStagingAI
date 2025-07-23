@@ -1,74 +1,90 @@
-// import { useState } from "react";
-import { Box, VStack, Button, Drawer, Portal } from "@chakra-ui/react";
-import { CloseButton } from "@chakra-ui/react";
-// import { HamburgerIcon } from "@chakra-ui/icons";
+import { Box, Flex, VStack, Text, IconButton, Avatar, Button } from "@chakra-ui/react";
+import { handleLogout } from "../auth/authentication";
+import { FiHome, FiImage, FiUser, FiSettings } from "react-icons/fi";
+// import { auth } from "../firebase";
+// Icons removed
+
+const navItems = [
+  { label: "Dashboard", icon: FiHome },
+  { label: "Photos", icon: FiImage },
+  { label: "Profile", icon: FiUser },
+  { label: "Settings", icon: FiSettings },
+];
 
 export default function Sidebar() {
-//   const { isOpen, onOpen, onClose } = useDisclosure();
-//   const isMobile = useBreakpointValue({ base: true, md: false });
-
-  const sidebarContent = (
-    <VStack align="start" spacing={6} p={6} w={{ base: "100vw", md: 60 }} h="100vh" bg="gray.200">
-      <Box fontWeight="bold">Dashboard</Box>
-      <Box>Profile</Box>
-      <Box>Settings</Box>
-      <Box>Logout</Box>
-    </VStack>
-  );
-
-//   if (isMobile) {
-//     return (
-//       <>
-//         <IconButton
-//           icon={<HamburgerIcon />}
-//           aria-label="Open menu"
-//           onClick={onOpen}
-//           position="fixed"
-//           top={20}
-//           left={4}
-//           zIndex={120}
-//         />
-//         <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="full">
-//           <DrawerOverlay />
-//           <DrawerContent>
-//             <DrawerCloseButton />
-//             <DrawerBody p={0}>{sidebarContent}</DrawerBody>
-//           </DrawerContent>
-//         </Drawer>
-//       </>
-//     );
-//   }
-
+  // const user = auth.currentUser;
   return (
-    <Drawer.Root placement="start">
-      <Drawer.Trigger asChild>
-        <Button variant="outline" size="sm">
-          Open Drawer
+    <Flex
+      direction="column"
+      justify="space-between"
+      align="center"
+      bg="rgba(255,255,255,0.2)"
+      boxShadow="xl"
+      width={{ base: "60px", md: "220px" }}
+      position="fixed"
+      height="97vh"
+      left={0}
+      top={0}
+      zIndex={110}
+      py={6}
+      px={2}
+      border="0.5px solid rgba(255,255,255,0.3)"
+      sx={{
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        borderRight: "1px solid rgba(255,255,255,0.3)"
+      }}
+      m={4}
+      borderRadius="2xl"
+    >
+      {/* Top: Logo/App Name */}
+      <Box mb={8} w="full" textAlign="center">
+        <Text fontWeight="bold" fontSize="2xl" color="blue.500" letterSpacing="wide" display={{ base: "none", md: "block" }}>
+          HomeStaging AI
+        </Text>
+        <Text fontWeight="bold" fontSize="2xl" color="blue.500" letterSpacing="wide" display={{ base: "block", md: "none" }}>
+          HS
+        </Text>
+      </Box>
+
+      {/* Middle: Navigation */}
+      <VStack spacing={4} align="stretch" w="full" flex={1}>
+        {navItems.map((item) => (
+          <Flex
+            key={item.label}
+            align="center"
+            px={2}
+            py={2}
+            borderRadius="md"
+            _hover={{ bg: "blue.50", color: "blue.600", cursor: "pointer" }}
+            transition="background 0.2s"
+            gap={3}
+            justify={{ base: "center", md: "flex-start" }}
+          >
+            <Box as={item.icon} fontSize="xl" />
+            <Text
+              fontWeight="medium"
+              display={{ base: "none", md: "block" }}
+            >
+              {item.label}
+            </Text>
+          </Flex>
+        ))}
+      </VStack>
+
+      {/* Divider replacement */}
+      <Box borderTop="1px solid #e2e8f0" my={4} width="100%" />
+
+      {/* Bottom: User Info */}
+      <Flex direction="column" align="center" w="full" mb={2}>
+        {/* <Avatar size="md" name="User Name" src="" mb={2} /> */}
+        <Text fontSize="sm" fontWeight="semibold" display={{ base: "none", md: "block" }}>
+          User name
+        </Text>
+        <Button size="sm" onClick={handleLogout}>
+          Logout
         </Button>
-      </Drawer.Trigger>
-      <Portal>
-        <Drawer.Backdrop />
-        <Drawer.Positioner>
-          <Drawer.Content>
-            <Drawer.Header>
-              <Drawer.Title>Drawer Title</Drawer.Title>
-            </Drawer.Header>
-            <Drawer.Body>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-            </Drawer.Body>
-            <Drawer.Footer>
-              <Button variant="outline">Cancel</Button>
-              <Button>Save</Button>
-            </Drawer.Footer>
-            <Drawer.CloseTrigger asChild>
-              <CloseButton size="sm" />
-            </Drawer.CloseTrigger>
-          </Drawer.Content>
-        </Drawer.Positioner>
-      </Portal>
-    </Drawer.Root>
+      </Flex>
+    </Flex>
   );
 } 
