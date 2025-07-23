@@ -1,8 +1,36 @@
 import React, { useState } from "react";
-import { Box, Button, Center, Heading, Text, VStack, FileUpload, Card, Image, SimpleGrid } from "@chakra-ui/react";
+import { Box, Button, Center, Heading, Text, VStack, FileUpload, Card, Image, SimpleGrid, Dialog, Portal, createOverlay, Input } from "@chakra-ui/react";
 import { HiUpload } from "react-icons/hi";
 import axios from "axios";
 import { auth } from "../firebase";
+
+const dialog = createOverlay((props) => {
+    const { title, description, handleFileUpload, handleFileChange, ...rest } = props
+    return (
+      <Dialog.Root {...rest}>
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content>
+              {title && (
+                <Dialog.Header>
+                  <Dialog.Title>{title}</Dialog.Title>
+                </Dialog.Header>
+              )}
+              <Dialog.Body spaceY="4">
+                {description && (
+                  <Dialog.Description>{description}</Dialog.Description>
+                )}
+                <Input type="file" accept="image/*" onChange={handleFileChange} />
+                <Button onClick={handleFileUpload}>Upload</Button>
+              </Dialog.Body>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
+    )
+  })
+  
 
 export default function HomeContent({ photos, setPhotos }) {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -46,6 +74,22 @@ export default function HomeContent({ photos, setPhotos }) {
             <Heading size="lg" mb={8} mt={2}>
                 All photos
             </Heading>
+            <Center my={10}>
+            <Button
+                onClick={() => {
+                dialog.open("a", {
+                    title: "Upload Image",
+                    description: "Upload an image and select an action",
+                    handleFileUpload: handleFileUpload,
+                    handleFileChange: handleFileChange,
+                })
+                }}
+            >
+                Upload Photo
+            </Button>
+            
+
+            </Center>
             <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8} mb={8} bg="gray.50">
                 {photos.map((photo) => (
                     <Card.Root
@@ -70,41 +114,8 @@ export default function HomeContent({ photos, setPhotos }) {
                     </Card.Root>
                 ))}
             </SimpleGrid>
-            <Center minH="60vh">
-                <VStack
-                    spacing={6}
-                    bg="white"
-                    borderRadius="xl"
-                    boxShadow="md"
-                    p={12}
-                    w={{ base: "100%", sm: "400px" }}
-                >
-                    <Text fontWeight="bold" fontSize="xl">
-                        Add Photos Here
-                    </Text>
-                    <Box>
-                        <FileUpload.Root>
-                            <FileUpload.HiddenInput onChange={handleFileChange} />
-                            <FileUpload.Trigger asChild>
-                                <Button variant="outline" size="sm">
-                                    <HiUpload /> Upload file
-                                </Button>
-                            </FileUpload.Trigger>
-                            <FileUpload.List />
-                        </FileUpload.Root>
-                        
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handleFileUpload}
-                            leftIcon={<HiUpload />}
-                            isDisabled={!selectedFile}
-                        >
-                            Submit
-                        </Button>
-                    </Box>
-                </VStack>
-            </Center>
+            
+            <dialog.Viewport />
         </Box>
     );
 }
