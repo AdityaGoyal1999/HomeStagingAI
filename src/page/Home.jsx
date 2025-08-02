@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import axios from "axios"
 import { auth } from "../firebase"
 import { Box, Flex, Button, Text, Avatar, Drawer } from "@chakra-ui/react"
-import Sidebar from "./Sidebar";
-import HomeContent from "./HomeContent";
+import Sidebar from "../components/Sidebar";
+import HomeContent from "../components/HomeContent";
 
 
 export default function Home() {

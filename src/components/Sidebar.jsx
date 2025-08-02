@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { Box, Flex, VStack, Text, IconButton, Avatar, Button } from "@chakra-ui/react";
 import { handleLogout } from "../auth/authentication";
 import { FiHome, FiImage, FiUser, FiSettings } from "react-icons/fi";
+import { MdExitToApp } from "react-icons/md";
 // import { auth } from "../firebase";
+import { useAuth } from "../context/AuthContext";
 // Icons removed
 
 const navItems = [
@@ -16,6 +18,8 @@ export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleCollapse = () => setIsCollapsed((prev) => !prev);
+  const user = useAuth();
+
 
   // const user = auth.currentUser;
   return (
@@ -93,14 +97,19 @@ export default function Sidebar() {
       <Box borderTop="1px solid #e2e8f0" my={4} width="100%" />
 
       {/* Bottom: User Info */}
-      <Flex direction="column" align="center" w="full" mb={2}>
+      <Flex direction="row" align="center" w="full" mb={2} justify="space-between" px={2}>
         {/* <Avatar size="md" name="User Name" src="" mb={2} /> */}
-        <Text fontSize="sm" fontWeight="semibold" display={{ base: "none", md: "block" }}>
-          User name
-        </Text>
-        <Button size="sm" onClick={handleLogout}>
+        <Box overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
+          <Text fontSize="sm" fontWeight="semibold" display={{ base: "none", md: "block" }} overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
+            {user.user.email}
+          </Text>
+        </Box>
+        {/* <Button size="sm" onClick={handleLogout}>
           Logout
-        </Button>
+        </Button> */}
+        <IconButton backgroundColor="white" color="black" onClick={handleLogout}>
+          <MdExitToApp />
+        </IconButton>
       </Flex>
     </Flex>
   );

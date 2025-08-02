@@ -1,35 +1,41 @@
 import React, { useState } from "react";
-import { Box, Button, Center, Heading, Text, VStack, FileUpload, Card, Image, SimpleGrid, Dialog, Portal, createOverlay, Input } from "@chakra-ui/react";
+import { Box, Button, CloseButton, HStack, Center, Heading, Text, VStack, FileUpload, Card, Image, SimpleGrid, Dialog, Portal, createOverlay, Input } from "@chakra-ui/react";
 import { HiUpload } from "react-icons/hi";
 import axios from "axios";
 import { auth } from "../firebase";
 
-const dialog = createOverlay((props) => {
-    const { title, description, handleFileUpload, handleFileChange, ...rest } = props
-    return (
-      <Dialog.Root {...rest}>
-        <Portal>
-          <Dialog.Backdrop />
-          <Dialog.Positioner>
-            <Dialog.Content>
-              {title && (
-                <Dialog.Header>
-                  <Dialog.Title>{title}</Dialog.Title>
-                </Dialog.Header>
-              )}
-              <Dialog.Body spaceY="4">
-                {description && (
-                  <Dialog.Description>{description}</Dialog.Description>
-                )}
-                <Input type="file" accept="image/*" onChange={handleFileChange} />
-                <Button onClick={handleFileUpload}>Upload</Button>
-              </Dialog.Body>
-            </Dialog.Content>
-          </Dialog.Positioner>
-        </Portal>
-      </Dialog.Root>
-    )
-  })
+const UploadDialog = ({ handleFileUpload, handleFileChange }) => {
+  return (
+    <Portal>
+      <Dialog.Backdrop />
+      <Dialog.Positioner>
+        <Dialog.Content>
+          <Dialog.Header>
+            <Dialog.Title>Upload Image</Dialog.Title>
+          </Dialog.Header>
+          <Dialog.Body>
+            <Text mb={4}>Upload an image and select an action</Text>
+            <Input 
+              type="file" 
+              accept="image/*" 
+              onChange={handleFileChange}
+              mb={4}
+            />
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Dialog.ActionTrigger asChild>
+              <Button variant="outline">Cancel</Button>
+            </Dialog.ActionTrigger>
+            <Button onClick={handleFileUpload}>Upload</Button>
+          </Dialog.Footer>
+          <Dialog.CloseTrigger asChild>
+            <CloseButton size="sm" />
+          </Dialog.CloseTrigger>
+        </Dialog.Content>
+      </Dialog.Positioner>
+    </Portal>
+  )
+}
   
 
 export default function HomeContent({ photos, setPhotos }) {
@@ -40,7 +46,7 @@ export default function HomeContent({ photos, setPhotos }) {
     };
 
     const handleFileUpload = async () => {
-        console.log(selectedFile);
+        // console.log(selectedFile);
         if (!selectedFile) return;
         try {
 
@@ -75,20 +81,17 @@ export default function HomeContent({ photos, setPhotos }) {
                 All photos
             </Heading>
             <Center my={10}>
-            <Button
-                onClick={() => {
-                dialog.open("a", {
-                    title: "Upload Image",
-                    description: "Upload an image and select an action",
-                    handleFileUpload: handleFileUpload,
-                    handleFileChange: handleFileChange,
-                })
-                }}
-            >
-                Upload Photo
-            </Button>
-            
-
+              <Dialog.Root placement="center" motionPreset="slide-in-bottom">
+                <Dialog.Trigger asChild>
+                  <Button leftIcon={<HiUpload />} colorScheme="blue">
+                    Upload Photo
+                  </Button>
+                </Dialog.Trigger>
+                <UploadDialog 
+                  handleFileUpload={handleFileUpload}
+                  handleFileChange={handleFileChange}
+                />
+              </Dialog.Root>
             </Center>
             <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8} mb={8} bg="gray.50">
                 {photos.map((photo) => (
@@ -114,8 +117,6 @@ export default function HomeContent({ photos, setPhotos }) {
                     </Card.Root>
                 ))}
             </SimpleGrid>
-            
-            <dialog.Viewport />
         </Box>
     );
 }

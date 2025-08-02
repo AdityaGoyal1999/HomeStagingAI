@@ -3,8 +3,8 @@ import './App.css'
 import React, { useEffect, useState } from "react"
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import { auth } from "./firebase"
-import Login from "./components/Login"
-import Home from "./components/Home"
+import Login from "./page/Login"
+import Home from "./page/Home"
 
 function App() {
 
