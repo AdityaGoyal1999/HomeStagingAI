@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { auth } from "./firebase"
 import Login from "./page/Login"
 import Home from "./page/Home"
+import Page from "./page/page"
 
 function App() {
 
@@ -26,7 +27,7 @@ function App() {
       <Routes>
         <Route path="/" element={user? <Navigate to="/home"/> : <Login />} />
         <Route path="/home" element={user? <Home />: <Navigate to="/" />} />
-        <Route />
+        <Route path="/photo" element={user? <Page />: <Navigate to="/" />} />
       </Routes>
     </Router>
   )

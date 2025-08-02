@@ -3,6 +3,7 @@ import { Box, Button, CloseButton, HStack, Center, Heading, Text, VStack, FileUp
 import { HiUpload } from "react-icons/hi";
 import axios from "axios";
 import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";  
 
 const UploadDialog = ({ handleFileUpload, handleFileChange }) => {
   return (
@@ -40,6 +41,7 @@ const UploadDialog = ({ handleFileUpload, handleFileChange }) => {
 
 export default function HomeContent({ photos, setPhotos }) {
     const [selectedFile, setSelectedFile] = useState(null);
+    const navigate = useNavigate();
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -95,26 +97,31 @@ export default function HomeContent({ photos, setPhotos }) {
             </Center>
             <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8} mb={8} bg="gray.50">
                 {photos.map((photo) => (
-                    <Card.Root
-                        key={photo.photoURL}
-                        bg="white"
-                        boxShadow="md"
-                        borderRadius="md"
-                        overflow="hidden"
-                        // Optionally add margin for extra separation
-                        // m={2}
-                    >
-                        <Card.Body p={0} w="100%" h="250px">
-                            <Image
-                                src={photo.photoURL}
-                                alt="Photo"
-                                width="100%"
-                                height="100%"
-                                objectFit="cover"
-                                display="block"
-                            />
-                        </Card.Body>
-                    </Card.Root>
+                  
+                  <Card.Root
+                      bg="white"
+                      boxShadow="md"
+                      borderRadius="md"
+                      overflow="hidden"
+                      onClick={() => {
+                          // navigate(`/photo/${photo.photoURL}`);
+                          navigate(`/photo?id=${encodeURIComponent(photo.photoURL)}`);
+                      }}
+                      key={photo.photoURL}
+                      // Optionally add margin for extra separation
+                      // m={2}
+                  >
+                      <Card.Body p={0} w="100%" h="250px">
+                          <Image
+                              src={photo.photoURL}
+                              alt="Photo"
+                              width="100%"
+                              height="100%"
+                              objectFit="cover"
+                              display="block"
+                          />
+                      </Card.Body>
+                  </Card.Root>
                 ))}
             </SimpleGrid>
         </Box>
