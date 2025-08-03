@@ -1,9 +1,25 @@
 import React, { useState } from "react";
-import { Box, Button, CloseButton, HStack, Center, Heading, Text, VStack, FileUpload, Card, Image, SimpleGrid, Dialog, Portal, createOverlay, Input } from "@chakra-ui/react";
+import { Box, Button, CloseButton, HStack, Center, Heading, Text, VStack, FileUpload, Card, Image, SimpleGrid, Dialog, Portal, Input, Select, createListCollection } from "@chakra-ui/react";
 import { HiUpload } from "react-icons/hi";
 import axios from "axios";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";  
+
+
+const roomStyles = createListCollection({
+  items: [
+    { label: "Minimalist", value: "minimalist" },
+    { label: "Scandinavian", value: "scandinavian" },
+    { label: "Modern", value: "modern" },
+    { label: "Bohemian", value: "bohemian" },
+    { label: "Vintage", value: "vintage" },
+    { label: "Industrial", value: "industrial" },
+    { label: "Rustic", value: "rustic" },
+    { label: "Coastal", value: "coastal" },
+    { label: "Tropical", value: "tropical" },
+    { label: "Mid-Century Modern", value: "mid-century-modern" },
+  ],
+})
 
 const UploadDialog = ({ handleFileUpload, handleFileChange }) => {
   return (
@@ -22,6 +38,36 @@ const UploadDialog = ({ handleFileUpload, handleFileChange }) => {
               onChange={handleFileChange}
               mb={4}
             />
+            {/* TODO: Add the selector to add the selection type */}
+            <Select.Root 
+              collection={roomStyles} 
+              size="sm" 
+              width="320px"
+              positioning={{ placement: "bottom", flip: true }}
+              >
+              <Select.HiddenSelect />
+              <Select.Label>Select a style</Select.Label>
+              <Select.Control>
+                <Select.Trigger>
+                  <Select.ValueText placeholder="Select style" />
+                </Select.Trigger>
+                <Select.IndicatorGroup>
+                  <Select.Indicator />
+                </Select.IndicatorGroup>
+              </Select.Control>
+              <Select.Positioner>
+                <Select.Content>
+                  {roomStyles.items.map((roomStyle) => (
+                    <Select.Item item={roomStyle} key={roomStyle.value}>
+                      {roomStyle.label}
+                      <Select.ItemIndicator />
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select.Positioner>
+            </Select.Root>
+
+            
           </Dialog.Body>
           <Dialog.Footer>
             <Dialog.ActionTrigger asChild>
@@ -42,6 +88,8 @@ const UploadDialog = ({ handleFileUpload, handleFileChange }) => {
 export default function HomeContent({ photos, setPhotos }) {
     const [selectedFile, setSelectedFile] = useState(null);
     const navigate = useNavigate();
+
+    // console.log("This is the photos", photos);
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -68,8 +116,12 @@ export default function HomeContent({ photos, setPhotos }) {
             });
 
             if (response.status === 200) {
-                setPhotos([...photos, response.data]);
+                setPhotos([...photos, {
+                  photoURL: response.data.url,
+                }]);
+                navigate("/photo?id=" + encodeURIComponent(response.data.url));  
             }
+            
         } catch (error) {
             console.error("Error uploading photo:", error);
         }
