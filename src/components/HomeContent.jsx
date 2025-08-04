@@ -21,7 +21,7 @@ const roomStyles = createListCollection({
   ],
 })
 
-const UploadDialog = ({ handleFileUpload, handleFileChange }) => {
+const UploadDialog = ({ handleFileUpload, handleFileChange, selectedStyle, onStyleChange }) => {
   return (
     <Portal>
       <Dialog.Backdrop />
@@ -38,34 +38,27 @@ const UploadDialog = ({ handleFileUpload, handleFileChange }) => {
               onChange={handleFileChange}
               mb={4}
             />
-            {/* TODO: Add the selector to add the selection type */}
-            <Select.Root 
-              collection={roomStyles} 
-              size="sm" 
-              width="320px"
-              positioning={{ placement: "bottom", flip: true }}
+            <Box mb={4}>
+              <Text mb={2} fontSize="sm" fontWeight="medium">Select a style</Text>
+              <select 
+                value={selectedStyle}
+                onChange={(e) => onStyleChange(e.target.value)}
+                style={{
+                  width: "320px",
+                  padding: "8px 12px",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "6px",
+                  fontSize: "14px"
+                }}
               >
-              <Select.HiddenSelect />
-              <Select.Label>Select a style</Select.Label>
-              <Select.Control>
-                <Select.Trigger>
-                  <Select.ValueText placeholder="Select style" />
-                </Select.Trigger>
-                <Select.IndicatorGroup>
-                  <Select.Indicator />
-                </Select.IndicatorGroup>
-              </Select.Control>
-              <Select.Positioner>
-                <Select.Content>
-                  {roomStyles.items.map((roomStyle) => (
-                    <Select.Item item={roomStyle} key={roomStyle.value}>
-                      {roomStyle.label}
-                      <Select.ItemIndicator />
-                    </Select.Item>
-                  ))}
-                </Select.Content>
-              </Select.Positioner>
-            </Select.Root>
+                <option value="">Select style</option>
+                {roomStyles.items.map((roomStyle) => (
+                  <option key={roomStyle.value} value={roomStyle.value}>
+                    {roomStyle.label}
+                  </option>
+                ))}
+              </select>
+            </Box>
 
             
           </Dialog.Body>
@@ -87,6 +80,7 @@ const UploadDialog = ({ handleFileUpload, handleFileChange }) => {
 
 export default function HomeContent({ photos, setPhotos }) {
     const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedStyle, setSelectedStyle] = useState("");
     const navigate = useNavigate();
 
     // console.log("This is the photos", photos);
@@ -95,9 +89,20 @@ export default function HomeContent({ photos, setPhotos }) {
         setSelectedFile(event.target.files[0]);
     };
 
+    const handleStyleChange = (value) => {
+        setSelectedStyle(value);
+    };
+
     const handleFileUpload = async () => {
         // console.log(selectedFile);
-        if (!selectedFile) return;
+        if (!selectedFile) {
+            alert("Please select a file to upload");
+            return;
+        }
+        if (!selectedStyle) {
+            alert("Please select a room style");
+            return;
+        }
         try {
 
             const userCredential = auth.currentUser
@@ -107,6 +112,7 @@ export default function HomeContent({ photos, setPhotos }) {
 
             const formData = new FormData();
             formData.append("photo", selectedFile);
+            formData.append("style", selectedStyle);
 
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_BASE_URL}/uploadPhoto`, formData, {
                 headers: {
@@ -144,6 +150,8 @@ export default function HomeContent({ photos, setPhotos }) {
                 <UploadDialog 
                   handleFileUpload={handleFileUpload}
                   handleFileChange={handleFileChange}
+                  selectedStyle={selectedStyle}
+                  onStyleChange={handleStyleChange}
                 />
               </Dialog.Root>
             </Center>
