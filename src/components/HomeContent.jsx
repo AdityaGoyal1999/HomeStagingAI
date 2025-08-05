@@ -122,10 +122,25 @@ export default function HomeContent({ photos, setPhotos }) {
             });
 
             if (response.status === 200) {
+                console.log('Upload response:', response.data);
+                
+                // Add both original and staged photos to the photos array
                 setPhotos([...photos, {
-                  photoURL: response.data.url,
-                }]);
-                navigate("/photo?id=" + encodeURIComponent(response.data.url));  
+                  photoURL: response.data.original.url,
+                  type: 'original'
+                }, 
+                
+                // {
+                //   photoURL: response.data.staged.url,
+                //   type: 'staged'
+                // }
+              
+              ]);
+                
+                // Navigate to comparison page with both URLs
+                const originalURL = encodeURIComponent(response.data.original.url);
+                const stagedURL = encodeURIComponent(response.data.staged.url);
+                navigate(`/photo?original=${originalURL}&staged=${stagedURL}`);
             }
             
         } catch (error) {
