@@ -5,6 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:emulator": "VITE_USE_EMULATOR=true vite --mode development",
+    "dev:production": "VITE_USE_EMULATOR=false vite --mode production",
+    "toggle-env": "node scripts/toggle-env.js",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
