@@ -1,71 +1,105 @@
 // The Cloud Functions for Firebase SDK to create Cloud Functions and triggers.
-const {logger} = require("firebase-functions");
 const {onRequest} = require("firebase-functions/v2/https");
-const {onDocumentCreated} = require("firebase-functions/v2/firestore");
 
-// The Firebase Admin SDK to access Firestore.
-const {initializeApp} = require("firebase-admin/app");
-const {getFirestore} = require("firebase-admin/firestore");
+// Load environment variables
+require('dotenv').config();
 
-const { authenticate } = require("./middleware/authentication");
+// Initialize Firebase
+const { initializeFirebase } = require('./config/firebase');
+
+// Import middleware and routes
+const { errorHandler, authenticate, validateFileUpload, validateStyle } = require('./middleware');
+const { userRoutes, photoRoutes } = require('./routes');
 
 const express = require("express");
-const cors = require("cors")({origin: true});
+const cors = require("cors")({
+  origin: [
+    'http://localhost:5173', // Vite dev server
+    'http://127.0.0.1:5173', // Alternative localhost
+    'http://localhost:3000', // React dev server
+    'http://127.0.0.1:3000', // Alternative localhost
+    'https://homestaging-3aeee.web.app', // Production domain
+    'https://homestaging-3aeee.firebaseapp.com' // Firebase hosting
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+});
+const { fileParser } = require('express-multipart-file-parser');
 
-initializeApp();
+// Initialize Firebase
+initializeFirebase();
 
 const app = express();
 
+// Middleware
 app.use(cors);
 
+// Handle preflight requests
+app.options('*', cors);
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use(fileParser({
+  rawBodyOptions: {
+    limit: '15mb', 
+  },
+  busboyOptions: {
+    limits: {
+      fields: 2
+    }
+  },
+}));
+
+// Routes
+app.use('/user', userRoutes);
+app.use('/photos', photoRoutes);
+
+
+
+// Legacy routes for backward compatibility
 app.get("/getProfile", authenticate, async (req, res) => {
-    // await new Promise((resolve) => authenticate(req, res, resolve))
-    if (!req.user) {
-        res.status(401).json({
-            error: "Unauthorized"
-        })
-        return;
-    }
-
-    const db = getFirestore();
-    const userRef = db.collection("users").doc(req.user.uid);
-    const doc = await userRef.get()
-
-    if (!doc.exists) {
-        res.status(404).json({
-            error: "User not found"
-        })
-        return;
-    }
-
-    res.status(200).json({
-        "user": doc.data()
-    })
-})
-
-app.get('/getPhotos', authenticate, async (req, res) => {
-  const db = getFirestore();
-  const userRef = db.collection('users').doc(req.user.uid);
-  const userDoc = await userRef.get();
-
-  if (!userDoc.exists) {
-    // Create user doc with empty photos array
-    await userRef.set({ photos: [] });
-    return res.status(200).json({ photos: [] });
+  try {
+    // Import the user controller to handle the request
+    const UserController = require('./controllers/userController');
+    const userController = new UserController();
+    await userController.getProfile(req, res);
+  } catch (error) {
+    console.error('Error in legacy getProfile route:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-
-  let userData = userDoc.data();
-  if (!userData.photos) {
-    // Set empty photos array if not present
-    await userRef.update({ photos: [] });
-    return res.status(200).json({ photos: [] });
-  }
-
-  return res.status(200).json({ photos: userData.photos });
 });
 
-exports.api = onRequest(app);
+app.get('/getPhotos', authenticate, async (req, res) => {
+  try {
+    // Import the photo controller to handle the request
+    const PhotoController = require('./controllers/photoController');
+    const photoController = new PhotoController();
+    await photoController.getPhotos(req, res);
+  } catch (error) {
+    console.error('Error in legacy getPhotos route:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
+app.post("/uploadPhoto", authenticate, validateFileUpload, validateStyle, async (req, res) => {
+  try {
+    // Import the photo controller to handle the request
+    const PhotoController = require('./controllers/photoController');
+    const photoController = new PhotoController();
+    await photoController.uploadPhoto(req, res);
+  } catch (error) {
+    console.error('Error in legacy uploadPhoto route:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Error handling middleware (should be last)
+app.use(errorHandler);
+
+// Export the function with the correct name for the emulator
+exports.api = onRequest(app);
 
 
 // users (collection)
@@ -80,3 +114,4 @@ exports.api = onRequest(app);
 //                           └── {generatedPhotoId} (document)
 //                                 ├── photoURL
 //                                 ├── createdAt
+
