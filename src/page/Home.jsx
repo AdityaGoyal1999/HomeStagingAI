@@ -4,7 +4,7 @@ import axios from "axios"
 import { auth } from "../firebase"
 import { Box, Flex, Button, Text, Avatar, Drawer } from "@chakra-ui/react"
 import Sidebar from "../components/Sidebar";
-import HomeContent from "../components/HomeContent";
+import { Link, Outlet } from "react-router-dom";
 
 
 export default function Home() {
@@ -76,7 +76,7 @@ export default function Home() {
                     overflowY="auto"
                 >
                     <Box flex={1} px={{ base: 4, md: 8 }}>
-                        <HomeContent user={user} photos={photos} setPhotos={setPhotos} />
+                        <Outlet context={{ user, photos, setPhotos }} />
                     </Box>
                 </Box>
             </Flex>

@@ -6,6 +6,9 @@ import { auth } from "./firebase"
 import Login from "./page/Login"
 import Home from "./page/Home"
 import Page from "./page/page"
+import Settings from "./components/Settings"
+import HomeContent from "./components/HomeContent"
+import Profile from "./components/Profile"
 
 function App() {
 
@@ -26,8 +29,13 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={user? <Navigate to="/home"/> : <Login />} />
-        <Route path="/home" element={user? <Home />: <Navigate to="/" />} />
+        <Route path="/home" element={user? <Home />: <Navigate to="/" />}>
+          <Route index element={<HomeContent />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
         <Route path="/photo" element={user? <Page />: <Navigate to="/" />} />
+        
       </Routes>
     </Router>
   )

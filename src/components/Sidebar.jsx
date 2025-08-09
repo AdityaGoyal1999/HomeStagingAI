@@ -3,15 +3,16 @@ import { Box, Flex, VStack, Text, IconButton, Avatar, Button } from "@chakra-ui/
 import { handleLogout } from "../auth/authentication";
 import { FiHome, FiImage, FiUser, FiSettings } from "react-icons/fi";
 import { MdExitToApp } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 // import { auth } from "../firebase";
 import { useAuth } from "../context/AuthContext";
 // Icons removed
 
 const navItems = [
-  { label: "Dashboard", icon: FiHome },
-  { label: "Photos", icon: FiImage },
-  { label: "Profile", icon: FiUser },
-  { label: "Settings", icon: FiSettings },
+  { label: "Dashboard", icon: FiHome, path: "/home" },
+  // { label: "Photos", icon: FiImage, path: "/photo" },
+  { label: "Profile", icon: FiUser, path: "/home/profile" },
+  { label: "Settings", icon: FiSettings, path: "/home/settings" },
 ];
 
 export default function Sidebar() {
@@ -19,7 +20,7 @@ export default function Sidebar() {
 
   const handleCollapse = () => setIsCollapsed((prev) => !prev);
   const user = useAuth();
-
+  const navigate = useNavigate();
 
   // const user = auth.currentUser;
   return (
@@ -78,6 +79,7 @@ export default function Sidebar() {
             py={2}
             borderRadius="md"
             _hover={{ bg: "blue.50", color: "blue.600", cursor: "pointer" }}
+            onClick={() => navigate(item.path)}
             transition="background 0.2s"
             gap={3}
             justify={{ base: "center", md: "flex-start" }}

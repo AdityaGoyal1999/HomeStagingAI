@@ -4,6 +4,7 @@ import { HiUpload } from "react-icons/hi";
 import axios from "axios";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";  
+import { useOutletContext } from "react-router-dom";
 
 
 const roomStyles = createListCollection({
@@ -78,9 +79,10 @@ const UploadDialog = ({ handleFileUpload, handleFileChange, selectedStyle, onSty
 }
   
 
-export default function HomeContent({ photos, setPhotos }) {
+export default function HomeContent() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [selectedStyle, setSelectedStyle] = useState("");
+    const { photos, setPhotos } = useOutletContext();
     const navigate = useNavigate();
 
     // console.log("This is the photos", photos);
