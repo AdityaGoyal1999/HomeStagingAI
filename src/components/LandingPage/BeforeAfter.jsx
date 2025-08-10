@@ -5,20 +5,20 @@ import stagedLivingRoom from "../../assets/staged-living-room.jpg";
 
 const BeforeAfter = () => {
   return (
-    <section className="py-20 px-4 bg-muted/50">
+    <section className="py-20 px-4 bg-muted/50 flex items-center justify-center" style={{ marginTop: '4rem' }}>
       <div className="container mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ fontSize: '2rem', fontWeight: 'bold' }}>
             See the Transformation
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          {/* <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Real properties transformed with StageAI. These listings received 3x more views 
             and sold 60% faster than unstaged properties.
-          </p>
+          </p> */}
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <Card.Root className="overflow-hidden shadow-card hover:shadow-elegant transition-all duration-300">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8" style={{ marginTop: '2rem' }}>
+          <Card.Root className="overflow-hidden shadow-card hover:shadow-elegant transition-all duration-300" style={{ borderRadius: '10px', boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)' }}>
             <Card.Body className="p-0">
               <img 
                 src={stagedLivingRoom} 
@@ -26,8 +26,8 @@ const BeforeAfter = () => {
                 className="w-full h-64 object-cover"
               />
               <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">Modern Living Room</h3>
-                <p className="text-muted-foreground mb-4">
+                <h3 className="text-xl font-semibold mb-2" style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Modern Living Room</h3>
+                <p className="text-muted-foreground mb-4" style={{ fontSize: '1.2rem', color: '#6b7280' }}>
                   Transformed empty space into an inviting living area that buyers could envision themselves in.
                 </p>
                 <div className="flex justify-between text-sm">
@@ -46,8 +46,8 @@ const BeforeAfter = () => {
                 className="w-full h-64 object-cover"
               />
               <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">Gourmet Kitchen</h3>
-                <p className="text-muted-foreground mb-4">
+                <h3 className="text-xl font-semibold mb-2" style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Gourmet Kitchen</h3>
+                <p className="text-muted-foreground mb-4" style={{ fontSize: '1.2rem', color: '#6b7280' }}>
                   Added warmth and functionality with strategic styling that highlighted premium features.
                 </p>
                 <div className="flex justify-between text-sm">
@@ -66,8 +66,8 @@ const BeforeAfter = () => {
                 className="w-full h-64 object-cover"
               />
               <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">Master Bedroom</h3>
-                <p className="text-muted-foreground mb-4">
+                <h3 className="text-xl font-semibold mb-2" style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Master Bedroom</h3>
+                <p className="text-muted-foreground mb-4" style={{ fontSize: '1.2rem', color: '#6b7280' }}>
                   Created a serene retreat that showcased the room's potential as a peaceful sanctuary.
                 </p>
                 <div className="flex justify-between text-sm">
