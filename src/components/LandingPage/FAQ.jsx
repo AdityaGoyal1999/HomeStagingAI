@@ -39,18 +39,18 @@ import {
   
   const FAQ = () => {
     return (
-      <section className="py-20 px-4">
+      <section className="py-20 px-4 flex items-center justify-center" style={{ marginTop: '4rem' }}>
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ fontSize: '2rem', fontWeight: 'bold' }}>
               Frequently Asked Questions
             </h2>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-xl text-muted-foreground" style={{ fontSize: '1.2rem', color: '#6b7280' }}>
               Everything you need to know about AI virtual staging
             </p>
           </div>
           
-          <Accordion.Root type="single" collapsible className="space-y-4">
+          <Accordion.Root type="single" collapsible className="space-y-4" style={{ marginTop: '2rem' }}>
             {faqs.map((faq, index) => (
               <Accordion.Item 
                 key={index} 
@@ -58,27 +58,27 @@ import {
                 className="border border-border rounded-lg px-6"
               >
                 <Accordion.ItemTrigger className="text-left hover:no-underline">
-                  <span className="font-semibold">{faq.question}</span>
+                  <span className="font-semibold" style={{ fontSize: '1.2rem', fontWeight: 'semibold' }}>{faq.question}</span>
                 </Accordion.ItemTrigger>
-                <Accordion.ItemContent className="text-muted-foreground leading-relaxed pb-4">
+                <Accordion.ItemContent className="text-muted-foreground leading-relaxed pb-4" style={{ fontSize: '1.2rem', color: '#6b7280' }}>
                   {faq.answer}
                 </Accordion.ItemContent>
               </Accordion.Item>
             ))}
           </Accordion.Root>
           
-          <div className="text-center mt-12">
-            <p className="text-muted-foreground mb-4">
+          {/* <div className="text-center mt-12">
+            <p className="text-muted-foreground mb-4" style={{ fontSize: '1.2rem', color: '#6b7280' }}>
               Still have questions?
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground" style={{ fontSize: '1.2rem', color: '#6b7280' }}>
               Contact our support team at{" "}
-              <a href="mailto:support@stageai.com" className="text-primary hover:underline">
+              <a href="mailto:support@stageai.com" className="text-primary hover:underline" style={{ fontSize: '1.2rem', color: '#6b7280' }}>
                 support@stageai.com
               </a>{" "}
               or schedule a demo call
             </p>
-          </div>
+          </div> */}
         </div>
       </section>
     );
