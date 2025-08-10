@@ -54,19 +54,19 @@ const testimonials = [
 
 const Testimonials = () => {
   return (
-    <section id="testimonials" className="py-20 px-4 bg-muted/50">
-      <div className="container mx-auto">
+    <section id="testimonials" className="py-20 px-4 bg-muted/50 flex items-center justify-center" style={{ marginTop: '4rem' }}>
+      <div className="container mx-auto flex flex-col items-center justify-center">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ fontSize: '2rem', fontWeight: 'bold' }}>
             Trusted by 10,000+ Real Estate Professionals
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto" style={{ fontSize: '1.2rem', color: '#6b7280' }}>
             Join thousands of agents and brokers who are closing more deals and earning higher 
             commissions with AI-powered virtual staging.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" style={{ marginTop: '2rem' }}>
           {testimonials.map((testimonial, index) => (
             <Card.Root key={index} className="shadow-card hover:shadow-elegant transition-all duration-300">
               <Card.Body className="p-6">
@@ -76,16 +76,16 @@ const Testimonials = () => {
                   ))}
                 </div>
                 
-                <p className="text-muted-foreground mb-6 leading-relaxed">
+                <p className="text-muted-foreground mb-6 leading-relaxed" style={{ fontSize: '1.2rem', color: '#6b7280', marginTop: '1rem' }}>
                   "{testimonial.content}"
                 </p>
                 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3" style={{ marginTop: '1rem' }}>
                   <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                     <span className="text-primary font-semibold text-sm">{testimonial.avatar}</span>
                   </div>
                   <div>
-                    <div className="font-semibold">{testimonial.name}</div>
+                    <div className="font-semibold" style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{testimonial.name}</div>
                     <div className="text-sm text-muted-foreground">
                       {testimonial.role} • {testimonial.company}
                     </div>
@@ -96,19 +96,19 @@ const Testimonials = () => {
           ))}
         </div>
         
-        <div className="text-center mt-16">
+        <div className="text-center mt-16" style={{ marginTop: '2rem' }}>
           <div className="flex items-center justify-center gap-8 text-muted-foreground">
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary">4.9/5</div>
-              <div className="text-sm">Average Rating</div>
+              <div className="text-3xl font-bold text-primary" style={{ fontSize: '2rem', fontWeight: 'bold' }}>4.9/5</div>
+              <div className="text-sm" style={{ fontSize: '1.2rem', color: '#6b7280' }}>Average Rating</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary">10,000+</div>
-              <div className="text-sm">Happy Customers</div>
+              <div className="text-3xl font-bold text-primary" style={{ fontSize: '2rem', fontWeight: 'bold' }}>10,000+</div>
+              <div className="text-sm" style={{ fontSize: '1.2rem', color: '#6b7280' }}>Happy Customers</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary">500K+</div>
-              <div className="text-sm">Properties Staged</div>
+              <div className="text-3xl font-bold text-primary" style={{ fontSize: '2rem', fontWeight: 'bold' }}>500K+</div>
+              <div className="text-sm" style={{ fontSize: '1.2rem', color: '#6b7280' }}>Properties Staged</div>
             </div>
           </div>
         </div>
