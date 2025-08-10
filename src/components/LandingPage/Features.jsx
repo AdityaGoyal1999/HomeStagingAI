@@ -36,27 +36,29 @@ const features = [
 
 const Features = () => {
   return (
-    <section id="features" className="py-20 px-4">
+    <section id="features" className="py-20 px-4 flex items-center justify-center" style={{ marginTop: '4rem' }}>
       <div className="container mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+        <div className="text-center mb-16 flex flex-col items-center justify-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ fontSize: '2rem', fontWeight: 'bold' }}>
             Everything You Need to Stage & Sell Faster
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          {/* <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Professional-grade virtual staging powered by cutting-edge AI technology. 
             Trusted by over 10,000 real estate professionals worldwide.
-          </p>
+          </p> */}
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" style={{ marginTop: '2rem' }}>
           {features.map((feature, index) => (
-            <Card.Root key={index} className="shadow-card hover:shadow-elegant transition-all duration-300 border-0 bg-card/50 backdrop-blur-sm">
+            <Card.Root key={index} 
+              // style={{ "&:hover": { shadow: 'lg', transition: 'all 0.3s ease' } }}
+              >
               <Card.Body className="p-6">
                 <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                   <feature.icon className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                <h3 className="text-xl font-semibold mb-3" style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed" style={{ fontSize: '1.2rem', color: '#6b7280' }}>{feature.description}</p>
               </Card.Body>
             </Card.Root>
           ))}
