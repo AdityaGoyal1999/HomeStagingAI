@@ -173,7 +173,7 @@ export default function HomeContent() {
                 />
               </Dialog.Root>
             </Center>
-            <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8} mb={8} bg="gray.50">
+            <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8} mb={8}>
                 {photos.map((photo) => (
                   
                   <Card.Root

@@ -10,7 +10,7 @@ export default function Login() {
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
     const [signIn, setSignIn] = useState(false);
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
 
     const manageLogin = async () => {
         // e.preventDefault()
@@ -19,6 +19,7 @@ export default function Login() {
             const user = await handleLogin(email, password)
             if (user) {
                 console.log(user)
+                navigate("/home")
             } else {
                 setError("Invalid email or password")
             }
@@ -34,6 +35,7 @@ export default function Login() {
             const user = await handleSignUp(email, password)
             if (user) {
                 console.log(user)
+                navigate("/home")
             } else {
                 setError("Invalid email or password")
             }
