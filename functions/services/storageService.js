@@ -5,7 +5,8 @@ const EmulatorDetector = require('../utils/emulatorDetector');
 class StorageService {
   constructor() {
     this.emulatorDetector = new EmulatorDetector();
-    this.bucketName = "homestaging-3aeee.firebasestorage.app";
+    // Resolve at runtime; allow config/storage.js to fall back to FIREBASE_CONFIG or default bucket
+    this.bucketName = process.env.FIREBASE_STORAGE_BUCKET;
     
     // Log emulator status for debugging
     if (this.emulatorDetector.isEmulator) {

@@ -1,4 +1,5 @@
 const UserModel = require('../models/userModel');
+const { Timestamp } = require('firebase-admin/firestore');
 
 class UserService {
   constructor() {
@@ -35,7 +36,7 @@ class UserService {
       if (!user) {
         user = await this.userModel.createUser(userId, {
           ...userData,
-          createdAt: new Date(),
+          createdAt: Timestamp.now(),
           photos: []
         });
       }

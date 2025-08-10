@@ -11,8 +11,19 @@ const PHOTO_TYPES = {
   GENERATED: 'generated'
 };
 
-// Allowed styles
-const ALLOWED_STYLES = ['modern', 'classic', 'minimalist', 'vintage'];
+// Allowed styles (keep in sync with frontend `roomStyles` values)
+const ALLOWED_STYLES = [
+  'minimalist',
+  'scandinavian',
+  'modern',
+  'bohemian',
+  'vintage',
+  'industrial',
+  'rustic',
+  'coastal',
+  'tropical',
+  'mid-century-modern',
+];
 
 // HTTP Status codes
 const STATUS_CODES = {

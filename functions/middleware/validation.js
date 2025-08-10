@@ -25,9 +25,9 @@ const validateStyle = (req, res, next) => {
     return res.status(400).json({ error: "Style is required" });
   }
 
-  // Add any style validation logic here
-  const allowedStyles = ['modern', 'classic', 'minimalist', 'vintage']; // Add your styles
-  if (!allowedStyles.includes(req.body.style)) {
+  // Validate style against allowed values
+  const { ALLOWED_STYLES } = require('../utils/constants');
+  if (!ALLOWED_STYLES.includes(req.body.style)) {
     return res.status(400).json({ error: "Invalid style selected" });
   }
 

@@ -9,16 +9,28 @@ const initializeStorage = () => {
 const getBucket = (bucketName) => {
   const storage = getStorage();
   const emulatorDetector = new EmulatorDetector();
-  
+
   if (emulatorDetector.isEmulator) {
-    // In emulator, use the default bucket
     console.log('Using emulator storage bucket');
     return storage.bucket();
-  } else {
-    // In production, use the specified bucket name
-    console.log('Using production storage bucket:', bucketName);
-    return storage.bucket(bucketName);
   }
+
+  // Resolve bucket: prefer explicit arg, then FIREBASE_CONFIG.storageBucket, otherwise default bucket
+  let resolvedBucket = bucketName;
+  if (!resolvedBucket && process.env.FIREBASE_CONFIG) {
+    try {
+      const cfg = JSON.parse(process.env.FIREBASE_CONFIG);
+      resolvedBucket = cfg.storageBucket || undefined;
+    } catch (_) {}
+  }
+
+  if (resolvedBucket) {
+    console.log('Using production storage bucket:', resolvedBucket);
+    return storage.bucket(resolvedBucket);
+  }
+
+  console.log('Using production default storage bucket');
+  return storage.bucket();
 };
 
 module.exports = {

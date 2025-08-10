@@ -3,7 +3,18 @@ const { getStorage } = require('firebase-admin/storage');
 
 // Firebase initialization
 const initializeFirebase = () => {
-  const app = initializeApp();
+  // Try to pass storageBucket if available to ensure default bucket is set
+  let options = undefined;
+  if (process.env.FIREBASE_CONFIG) {
+    try {
+      const cfg = JSON.parse(process.env.FIREBASE_CONFIG);
+      if (cfg.storageBucket) {
+        options = { storageBucket: cfg.storageBucket };
+      }
+    } catch (_) {}
+  }
+
+  const app = initializeApp(options);
   
   // Initialize storage
   const storage = getStorage(app);

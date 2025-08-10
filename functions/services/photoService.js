@@ -36,19 +36,28 @@ class PhotoService {
       
       try {
         stagedImageURL = await this.replicateService.generateStagedImageFromBuffer(file.buffer, style);
+        stagedImageURL = stagedImageURL.href;
         console.log('✅ Staged image generated successfully:', stagedImageURL);
 
+        if (!stagedImageURL) {
+          throw new Error('Staged image URL is null');
+        }
+
         // Create staged photo data with link to original
-        stagedPhotoData = this.storageService.createPhotoData(stagedImageURL, 'ai-generated', style, originalPhotoData.id);
-        console.log('✅ Staged photo data created:', stagedPhotoData);
+        // stagedPhotoData = this.storageService.createPhotoData(stagedImageURL, 'generated', style, originalPhotoData.id);
+        // console.log('✅ Staged photo data created:', stagedPhotoData);
 
         // Validate staged photo data
-        this.storageService.validatePhotoData(stagedPhotoData);
-        console.log('✅ Staged photo data validated');
+        // this.storageService.validatePhotoData(stagedPhotoData);
+        // console.log('✅ Staged photo data validated');
 
         // Add staged photo to user's photos
-        await this.userModel.addPhotoToUser(userId, stagedPhotoData);
-        console.log('✅ Staged photo saved to Firestore');
+        // await this.userModel.addPhotoToUser(userId, stagedPhotoData);
+        // console.log('✅ Staged photo saved to Firestore');
+
+        // Also append the generated URL to the original photo's nested array for easy retrieval
+        await this.userModel.appendGeneratedUrlToPhoto(userId, originalPhotoData.id, stagedImageURL);
+        console.log('✅ Appended generated URL to original photo');
       } catch (stagingError) {
         console.error('❌ Error during staging:', stagingError.message);
         // Continue with original photo only if staging fails
