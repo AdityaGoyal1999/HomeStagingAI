@@ -6,6 +6,7 @@ import { auth } from "./firebase"
 import Login from "./page/Login"
 import Home from "./page/Home"
 import Page from "./page/page"
+import LandingPage from "./page/LandingPage"
 import Settings from "./components/Settings"
 import HomeContent from "./components/HomeContent"
 import Profile from "./components/Profile"
@@ -28,7 +29,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={user? <Navigate to="/home"/> : <Login />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/home" element={user? <Home />: <Navigate to="/" />}>
           <Route index element={<HomeContent />} />
           <Route path="settings" element={<Settings />} />
