@@ -5,6 +5,7 @@ import axios from "axios";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";  
 import { useOutletContext } from "react-router-dom";
+import { AiOutlineConsoleSql } from "react-icons/ai";
 
 
 const roomStyles = createListCollection({
@@ -182,7 +183,16 @@ export default function HomeContent() {
                       overflow="hidden"
                       onClick={() => {
                           // navigate(`/photo/${photo.photoURL}`);
-                          navigate(`/photo?id=${encodeURIComponent(photo.photoURL)}`);
+                          const originalURL = encodeURIComponent(photo.photoURL);
+
+                          // get the generated URLS and attach them to the image
+                          const generatedUrls = photo.generatedUrls;
+                          // TODO: can pass more than 2 images
+                          const stagedURL = generatedUrls[0];
+
+                          navigate(`/photo?original=${originalURL}&staged=${stagedURL}`);
+
+                          // TODO: will have to fetch the staged URL from backend
                       }}
                       key={photo.photoURL}
                       // Optionally add margin for extra separation

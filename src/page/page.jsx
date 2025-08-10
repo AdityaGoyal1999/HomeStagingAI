@@ -6,7 +6,7 @@ export default function Page() {
     console.log('Search params:', Object.fromEntries(searchParams.entries()));
     console.log('Original URL:', searchParams.get('original'));
     console.log('Staged URL:', searchParams.get('staged'));
-    // console.log('Original URL:', searchParams.get('id'));
+    console.log('Original URL:', searchParams.get('id'));
     
     const originalURL = searchParams.get('original');
     const stagedURL = searchParams.get('staged');
