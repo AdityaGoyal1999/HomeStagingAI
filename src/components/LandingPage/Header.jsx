@@ -1,12 +1,15 @@
 import { Button } from "@chakra-ui/react";
 import { Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom"
 
 const Header = () => {
+  const navigate = useNavigate()
+
   return (
-    <header className="fixed top-0 w-full bg-background/95 backdrop-blur-md border-b border-border z-50">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+    <header className="sticky inset-x-0 top-0 bg-background/95 backdrop-blur-md border-b border-border z-50 flex justify-center min-h-20 bg-white">
+      <div className="container mx-auto px-4 py-4 flex justify-between">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-8 w-8 text-primary" />
+          <Sparkles className="h-15 w-15 text-primary" />
           <span className="text-2xl font-bold text-primary">StageAI</span>
         </div>
         
@@ -17,8 +20,8 @@ const Header = () => {
         </nav>
         
         <div className="flex items-center gap-4">
-          <Button variant="ghost">Sign In</Button>
-          <Button variant="hero" size="lg">Get Started</Button>
+          <Button variant="ghost" onClick={() => navigate("/login")}>Sign In</Button>
+          <Button variant="hero" size="lg" onClick={() => navigate("/login")}>Get Started</Button>
         </div>
       </div>
     </header>

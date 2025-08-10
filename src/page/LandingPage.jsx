@@ -11,7 +11,7 @@ import Footer from "../components/LandingPage/Footer"
 
 export default function LandingPage() {
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen min-w-screen bg-gray-100">
             <Header />
             <Hero />
             <Features />
