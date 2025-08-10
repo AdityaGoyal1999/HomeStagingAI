@@ -31,7 +31,7 @@ const plans = [
       "MLS integration",
       "Team collaboration"
     ],
-    cta: "Start Free Trial",
+    cta: "Get Started",
     popular: true
   },
   {
@@ -49,17 +49,17 @@ const plans = [
       "White-label options",
       "Custom training"
     ],
-    cta: "Contact Sales",
+    cta: "Start Free Trial",
     popular: false
   }
 ];
 
 const Pricing = () => {
   return (
-    <section id="pricing" className="py-20 px-4">
-      <div className="container mx-auto">
+    <section id="pricing" className="py-20 px-4 flex items-center justify-center" style={{ marginTop: '4rem' }}>
+      <div className="container mx-auto flex flex-col items-center justify-center">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ fontSize: '2rem', fontWeight: 'bold' }}>
             Simple, Transparent Pricing
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -68,7 +68,7 @@ const Pricing = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto" style={{ marginTop: '2rem' }}>
           {plans.map((plan, index) => (
             <Card.Root 
               key={index} 
@@ -77,18 +77,18 @@ const Pricing = () => {
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-gradient-cta text-secondary-foreground px-4 py-2 rounded-full text-sm font-semibold">
+                <div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-gradient-cta text-secondary-foreground px-4 py-2 rounded-full text-sm font-semibold" style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
                     Most Popular
                   </span>
                 </div>
               )}
               
-              <Card.Header className="text-center pb-8">
-                <Card.Title className="text-2xl mb-2">{plan.name}</Card.Title>
+              <Card.Header className="text-center pb-8" style={{ borderRadius: '10px', boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)' }} >
+                <Card.Title className="text-2xl mb-2" style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{plan.name}</Card.Title>
                 <div className="mb-2">
-                  <span className="text-4xl font-bold">{plan.price}</span>
-                  <span className="text-muted-foreground">{plan.period}</span>
+                  <span className="text-4xl font-bold" style={{ fontSize: '2rem', fontWeight: 'bold' }}>{plan.price}</span>
+                  <span className="text-muted-foreground" style={{ fontSize: '1.2rem', color: '#6b7280' }}>{plan.period}</span>
                 </div>
                 <p className="text-muted-foreground">{plan.description}</p>
               </Card.Header>
@@ -104,9 +104,10 @@ const Pricing = () => {
                 </ul>
                 
                 <Button 
-                  variant={plan.popular ? "hero" : "outline"} 
+                  variant="outline"
                   className="w-full" 
                   size="lg"
+                  style={{ fontSize: '1rem', fontWeight: 'bold', marginTop: '1rem' }}
                 >
                   {plan.cta}
                 </Button>
@@ -115,12 +116,12 @@ const Pricing = () => {
           ))}
         </div>
         
-        <div className="text-center mt-16">
-          <p className="text-muted-foreground mb-4">
+        <div className="text-center mt-16" style={{ marginTop: '2rem' }}>
+          <p className="text-muted-foreground mb-4" style={{ fontSize: '1.2rem', color: '#6b7280' }}>
             All plans include our 30-day money-back guarantee
           </p>
-          <p className="text-sm text-muted-foreground">
-            Need a custom solution? <a href="#" className="text-primary hover:underline">Contact our sales team</a>
+          <p className="text-sm text-muted-foreground" style={{ fontSize: '1.2rem', color: '#6b7280' }}>
+            Need a custom solution? <a href="#" className="text-primary hover:underline" style={{ fontSize: '1.2rem', color: '#6b7280' }}>Contact our sales team</a>
           </p>
         </div>
       </div>
