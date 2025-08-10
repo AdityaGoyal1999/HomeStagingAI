@@ -2,7 +2,7 @@ import { Sparkles } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-foreground text-background py-16 px-4">
+    <footer className="bg-foreground text-background py-16 px-4 flex items-center justify-center" style={{ marginTop: '4rem', paddingBottom: '4rem' }}>
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div className="col-span-1 md:col-span-2">
@@ -48,7 +48,7 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="border-t border-background/20 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-background/20 pt-8 flex flex-col md:flex-row justify-center items-center" style={{ marginTop: '2rem' }}>
           <p className="text-background/60 text-sm">
             © 2024 StageAI. All rights reserved.
           </p>
