@@ -15,6 +15,31 @@ class ReplicateService {
     });
   }
 
+  // Helper method to handle different Replicate output formats
+  handleReplicateOutput(output) {
+    if (output && typeof output === 'object' && typeof output.url === 'function') {
+      // This model returns an object with a url() method
+      const imageUrl = output.url();
+      console.log('Generated image URL (url method):', imageUrl);
+      return imageUrl;
+    } else if (Array.isArray(output) && output.length > 0) {
+      // Fallback for array format
+      console.log('Generated image URL (array):', output[0]);
+      return output[0];
+    } else if (typeof output === 'string') {
+      // Fallback for string format
+      console.log('Generated image URL (string):', output);
+      return output;
+    } else if (output && typeof output === 'object' && output.href) {
+      // Some models return an object with href property
+      console.log('Generated image URL (href):', output.href);
+      return output.href;
+    } else {
+      console.error('Unexpected output format:', output);
+      throw new Error('Unexpected output format from Replicate API');
+    }
+  }
+
   async generateStagedImage(imageUrl, style = 'modern') {
     try {
       console.log('Starting AI image generation with Replicate...');
@@ -40,22 +65,7 @@ class ReplicateService {
       console.log('Output type:', typeof output);
       console.log('Output:', output);
       
-      // Handle the output based on the model's documentation
-      if (output && typeof output === 'object' && typeof output.url === 'function') {
-        // This model returns an object with a url() method
-        const imageUrl = output.url();
-        console.log('Generated image URL:', imageUrl);
-        return imageUrl;
-      } else if (Array.isArray(output) && output.length > 0) {
-        // Fallback for array format
-        return output[0];
-      } else if (typeof output === 'string') {
-        // Fallback for string format
-        return output;
-      } else {
-        console.error('Unexpected output format:', output);
-        throw new Error('Unexpected output format from Replicate API');
-      }
+      return this.handleReplicateOutput(output);
     } catch (error) {
       console.error('Error generating staged image:', error);
       throw new Error(`Failed to generate staged image: ${error.message}`);
@@ -85,22 +95,7 @@ class ReplicateService {
       console.log('Output type:', typeof output);
       console.log('Output:', output);
       
-      // Handle the output based on the model's documentation
-      if (output && typeof output === 'object' && typeof output.url === 'function') {
-        // This model returns an object with a url() method
-        const imageUrl = output.url();
-        console.log('Generated image URL:', imageUrl);
-        return imageUrl;
-      } else if (Array.isArray(output) && output.length > 0) {
-        // Fallback for array format
-        return output[0];
-      } else if (typeof output === 'string') {
-        // Fallback for string format
-        return output;
-      } else {
-        console.error('Unexpected output format:', output);
-        throw new Error('Unexpected output format from Replicate API');
-      }
+      return this.handleReplicateOutput(output);
     } catch (error) {
       console.error('Error generating staged image from buffer:', error);
       throw new Error(`Failed to generate staged image from buffer: ${error.message}`);
@@ -129,13 +124,8 @@ class ReplicateService {
         );
         
         // Handle the output format for variations
-        if (output && typeof output === 'object' && typeof output.url === 'function') {
-          variations.push(output.url());
-        } else if (Array.isArray(output) && output.length > 0) {
-          variations.push(output[0]);
-        } else {
-          variations.push(output);
-        }
+        const imageUrl = this.handleReplicateOutput(output);
+        variations.push(imageUrl);
       }
 
       console.log(`Generated ${variations.length} variations successfully`);
@@ -166,7 +156,7 @@ class ReplicateService {
       );
 
       console.log('Alternative staging generation completed');
-      return output[0];
+      return this.handleReplicateOutput(output);
     } catch (error) {
       console.error('Error generating alternative staged image:', error);
       throw new Error(`Failed to generate alternative staged image: ${error.message}`);
