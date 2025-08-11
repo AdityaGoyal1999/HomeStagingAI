@@ -4,7 +4,7 @@ import heroImage from "../../assets/hero-staging-comparison.jpg";
 
 const Hero = () => {
   return (
-    <section className="pt-32 pb-20 px-4 bg-gray-100 flex items-center justify-center">
+    <section className="pt-32 pb-20 px-4 bg-gray-100 flex items-center justify-center" style={{ paddingTop: '10rem' }}>
       <div className="container mx-auto text-center flex flex-col items-center justify-center mt-14">
         <div className="max-w-4xl mx-auto mb-12">
           <h1 className="mb-6" style={{ fontWeight: 'bold', fontSize: '4rem', color: '#1e40af' }}>

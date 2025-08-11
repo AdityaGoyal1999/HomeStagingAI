@@ -143,7 +143,12 @@ export default function HomeContent() {
                 // Navigate to comparison page with both URLs
                 const originalURL = encodeURIComponent(response.data.original.url);
                 const stagedURL = encodeURIComponent(response.data.staged.url);
-                navigate(`/photo?original=${originalURL}&staged=${stagedURL}`);
+                navigate(`/photo`, {
+                  state: {
+                    originalURL: originalURL,
+                    stagedURL: stagedURL
+                  }
+                });
             }
             
         } catch (error) {
@@ -172,7 +177,10 @@ export default function HomeContent() {
                   onStyleChange={handleStyleChange}
                 />
               </Dialog.Root>
+              
+              {/* <Button>Remove sky image</Button> */}
             </Center>
+
             <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8} mb={8}>
                 {photos.map((photo) => (
                   
@@ -187,10 +195,37 @@ export default function HomeContent() {
 
                           // get the generated URLS and attach them to the image
                           const generatedUrls = photo.generatedUrls;
-                          // TODO: can pass more than 2 images
+                          console.log("🔍 Photo object:", photo);
+                          console.log("🔍 Generated URLs:", generatedUrls);
+                          console.log("🔍 Generated URLs type:", typeof generatedUrls);
+                          console.log("🔍 Generated URLs is array:", Array.isArray(generatedUrls));
+                          
+                          if (!generatedUrls || !Array.isArray(generatedUrls) || generatedUrls.length === 0) {
+                              console.warn("❌ No generated URLs found, navigating with original only");
+                              navigate(`/photo?original=${originalURL}`);
+                              return;
+                          }
+                          
                           const stagedURL = generatedUrls[0];
+                          console.log("🔍 Staged URL:", stagedURL);
+                          
+                          if (!stagedURL) {
+                              console.warn("❌ Staged URL is null/undefined, navigating with original only");
+                              navigate(`/photo?original=${originalURL}`);
+                              return;
+                          }
 
-                          navigate(`/photo?original=${originalURL}&staged=${stagedURL}`);
+                          // Use navigation state instead of search parameters to avoid URL encoding issues
+                          const navigationState = {
+                            originalURL: photo.photoURL,
+                            stagedURL: stagedURL
+                          };
+                          
+                          console.log("🚀 Navigating with state:", navigationState);
+                          console.log("🚀 Original URL length:", photo.photoURL.length);
+                          console.log("🚀 Staged URL length:", stagedURL?.length || 0);
+                          
+                          navigate('/photo', { state: navigationState });
 
                           // TODO: will have to fetch the staged URL from backend
                       }}

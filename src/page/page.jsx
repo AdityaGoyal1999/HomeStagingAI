@@ -1,15 +1,18 @@
 import { Box, Text, Image, VStack, HStack, Heading, Badge } from "@chakra-ui/react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export default function Page() {
-    const [searchParams] = useSearchParams();
-    console.log('Search params:', Object.fromEntries(searchParams.entries()));
-    console.log('Original URL:', searchParams.get('original'));
-    console.log('Staged URL:', searchParams.get('staged'));
-    console.log('Original URL:', searchParams.get('id'));
+    const location = useLocation();
     
-    const originalURL = searchParams.get('original');
-    const stagedURL = searchParams.get('staged');
+    // Get URLs from navigation state instead of search parameters
+    const originalURL = location.state?.originalURL;
+    const stagedURL = location.state?.stagedURL;
+
+    console.log("🔍 Location state:", location.state);
+    console.log("🔍 Original URL:", originalURL);
+    console.log("🔍 Staged URL:", stagedURL);
+    console.log("🔍 Staged URL length:", stagedURL?.length || 0);
+    console.log("🔍 Staged URL includes '...':", stagedURL?.includes('...') || false);
 
     return (
         <Box p={8}>
@@ -83,6 +86,11 @@ export default function Page() {
                                 borderRadius="md"
                                 boxShadow="lg"
                             />
+                        )}
+                        {!originalURL && !stagedURL && (
+                            <Text fontSize="md" color="red.500">
+                                No image data provided. Please navigate from the home page.
+                            </Text>
                         )}
                     </VStack>
                 )}
