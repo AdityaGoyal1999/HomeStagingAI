@@ -181,12 +181,25 @@ export default function HomeContent() {
               {/* <Button>Remove sky image</Button> */}
               <Button
                 onClick={async () => {
-                  const response = await axios.post(`${import.meta.env.VITE_BACKEND_BASE_URL}/payment/process`, {
-                    amount: 1000,
-                    currency: "usd",
-                    description: "Home staging service",
-                  });
-                  console.log("🔍 Payment response:", response.data);
+                    try{
+                    console.log("🔍 Full URL being called:", `${import.meta.env.VITE_BACKEND_BASE_URL}/payment/create-checkout-session`);
+                    console.log("🔍 Backend base URL:", import.meta.env.VITE_BACKEND_BASE_URL);
+                    const response = await axios.post(`${import.meta.env.VITE_BACKEND_BASE_URL}/payment/create-checkout-session`, {
+                      amount: 1000,
+                      currency: "usd",
+                      description: "Home staging service",
+                      successUrl: `${window.location.origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+                      cancelUrl: `${window.location.origin}/payment-cancelled`,
+                    });
+                    console.log("🔍 Payment response:", response.data);
+
+                    // Go the stripe checkout page
+                    if (response.data && response.data.success && response.data.checkoutUrl) {
+                      window.location.href = response.data.checkoutUrl;
+                    }
+                  } catch (error) {
+                    console.error("🔍 Error:", error);
+                  }
                 }}
               >
                 Payment Button

@@ -10,6 +10,8 @@ import LandingPage from "./page/LandingPage"
 import Settings from "./components/Settings"
 import HomeContent from "./components/HomeContent"
 import Profile from "./components/Profile"
+import PaymentSuccess from "./components/PaymentSuccess"
+import PaymentCancelled from "./components/PaymentCancelled"
 
 function App() {
 
@@ -37,6 +39,10 @@ function App() {
           <Route path="profile" element={<Profile />} />
         </Route>
         <Route path="/photo" element={user? <Page />: <Navigate to="/" />} />
+        
+        {/* Payment Result Routes */}
+        <Route path="/payment-success" element={user? <PaymentSuccess />: <Navigate to="/" />} />
+        <Route path="/payment-cancelled" element={user? <PaymentCancelled />: <Navigate to="/" />} />
         
       </Routes>
     </Router>
