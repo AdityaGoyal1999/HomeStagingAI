@@ -179,6 +179,18 @@ export default function HomeContent() {
               </Dialog.Root>
               
               {/* <Button>Remove sky image</Button> */}
+              <Button
+                onClick={async () => {
+                  const response = await axios.post(`${import.meta.env.VITE_BACKEND_BASE_URL}/payment/process`, {
+                    amount: 1000,
+                    currency: "usd",
+                    description: "Home staging service",
+                  });
+                  console.log("🔍 Payment response:", response.data);
+                }}
+              >
+                Payment Button
+              </Button>
             </Center>
 
             <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8} mb={8}>
