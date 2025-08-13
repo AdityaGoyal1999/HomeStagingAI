@@ -9,7 +9,7 @@ const { initializeFirebase } = require('./config/firebase');
 
 // Import middleware and routes
 const { errorHandler, authenticate, validateFileUpload, validateStyle } = require('./middleware');
-const { userRoutes, photoRoutes } = require('./routes');
+const { userRoutes, photoRoutes, paymentRoutes } = require('./routes');
 
 const express = require("express");
 const cors = require("cors")({
@@ -55,6 +55,7 @@ app.use(fileParser({
 // Routes
 app.use('/user', userRoutes);
 app.use('/photos', photoRoutes);
+app.use('/payment', paymentRoutes);
 
 
 

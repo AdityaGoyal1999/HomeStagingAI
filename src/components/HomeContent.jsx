@@ -179,6 +179,31 @@ export default function HomeContent() {
               </Dialog.Root>
               
               {/* <Button>Remove sky image</Button> */}
+              <Button
+                onClick={async () => {
+                    try{
+                    console.log("🔍 Full URL being called:", `${import.meta.env.VITE_BACKEND_BASE_URL}/payment/create-checkout-session`);
+                    console.log("🔍 Backend base URL:", import.meta.env.VITE_BACKEND_BASE_URL);
+                    const response = await axios.post(`${import.meta.env.VITE_BACKEND_BASE_URL}/payment/create-checkout-session`, {
+                      amount: 1000,
+                      currency: "usd",
+                      description: "Home staging service",
+                      successUrl: `${window.location.origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+                      cancelUrl: `${window.location.origin}/payment-cancelled`,
+                    });
+                    console.log("🔍 Payment response:", response.data);
+
+                    // Go the stripe checkout page
+                    if (response.data && response.data.success && response.data.checkoutUrl) {
+                      window.location.href = response.data.checkoutUrl;
+                    }
+                  } catch (error) {
+                    console.error("🔍 Error:", error);
+                  }
+                }}
+              >
+                Payment Button
+              </Button>
             </Center>
 
             <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8} mb={8}>
