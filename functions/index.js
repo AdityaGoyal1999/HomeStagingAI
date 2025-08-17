@@ -12,6 +12,7 @@ const { errorHandler, authenticate, validateFileUpload, validateStyle } = requir
 const { userRoutes, photoRoutes, paymentRoutes } = require('./routes');
 
 const express = require("express");
+const bodyParser = require("body-parser");
 const cors = require("cors")({
   origin: [
     'http://localhost:5173', // Vite dev server
@@ -38,8 +39,43 @@ app.use(cors);
 // Handle preflight requests
 app.options('*', cors);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Custom middleware to handle body parsing conditionally
+app.use((req, res, next) => {
+  console.log("🔍 Middleware: Processing request for path:", req.path);
+  
+  if (req.path === '/payment/webhook') {
+    console.log("🔍 Middleware: Webhook route detected, capturing raw body...");
+    
+    // For webhook routes, capture raw body and skip JSON parsing
+    let data = '';
+    req.setEncoding('utf8');
+    
+    req.on('data', chunk => {
+      console.log("🔍 Middleware: Received chunk, length:", chunk.length);
+      data += chunk;
+    });
+    
+    req.on('end', () => {
+      console.log("🔍 Middleware: Body capture complete, total length:", data.length);
+      req.rawBody = Buffer.from(data, 'utf8');
+      console.log("🔍 Middleware: Calling next() for webhook route");
+      next();
+    });
+    
+    req.on('error', (err) => {
+      console.error("🔍 Middleware: Error capturing body:", err);
+      next(err);
+    });
+  } else {
+    console.log("🔍 Middleware: Non-webhook route, calling next() immediately");
+    // For non-webhook routes, continue to normal body parsing
+    next();
+  }
+});
+
+// Use JSON parsing for non-webhook routes
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(fileParser({
   rawBodyOptions: {

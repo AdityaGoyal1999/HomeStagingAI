@@ -63,25 +63,36 @@ class PaymentController {
    * @param {Object} req - Express request object
    * @param {Object} res - Express response object
    */
-  async handleWebhook(req, res) {
+  async handleWebhook(content, res) {
     console.log("🔍 Webhook received");
-    const sig = req.headers['stripe-signature'];
+    console.log("🔍 Content Headers:", content.headers);
+    console.log("🔍 Content Body:", content.body);
+    const sig = content.headers['stripe-signature'];
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     let event;
 
     try {
-      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+      console.log("🔍 About to verify Stripe signature...");
+      event = stripe.webhooks.constructEvent(content.body, sig, endpointSecret);
+      console.log("🔍 Stripe signature verification successful!");
     } catch (err) {
-      console.error('Webhook signature verification failed:', err.message);
+      console.error('❌ Webhook signature verification failed:', err.message);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
+
+    console.log("🔍 Event type:", event.type);
+    console.log("🔍 About to handle event...");
 
     // Handle the event
     switch (event.type) {
       case 'checkout.session.completed':
+        console.log("🔍 Processing checkout.session.completed...");
         const session = event.data.object;
-        console.log('Payment completed for session:', session.id);
+        console.log('🔍 Payment completed for session:', session.id);
+        console.log('🔍 Session amount:', session.amount_total);
+        console.log('🔍 Session status:', session.payment_status);
+        break;
         
         // Here you can add logic to:
         // - Update your database
@@ -89,23 +100,30 @@ class PaymentController {
         // - Update order status
         // - etc.
         
+        console.log("🔍 checkout.session.completed processing complete");
         break;
       
       case 'payment_intent.succeeded':
+        console.log("🔍 Processing payment_intent.succeeded...");
         const paymentIntent = event.data.object;
-        console.log('Payment succeeded:', paymentIntent.id);
+        console.log('🔍 Payment succeeded:', paymentIntent.id);
+        console.log("🔍 payment_intent.succeeded processing complete");
         break;
       
       case 'payment_intent.payment_failed':
+        console.log("🔍 Processing payment_intent.payment_failed...");
         const failedPayment = event.data.object;
-        console.log('Payment failed:', failedPayment.id);
+        console.log('🔍 Payment failed:', failedPayment.id);
+        console.log("🔍 payment_intent.payment_failed processing complete");
         break;
       
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        console.log(`🔍 Unhandled event type: ${event.type}`);
     }
 
+    console.log("🔍 About to send response...");
     res.json({ received: true });
+    console.log("🔍 Response sent successfully!");
   }
 
   /**
