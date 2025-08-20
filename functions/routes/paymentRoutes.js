@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const PaymentController = require('../controllers/paymentController');
+const { authenticate } = require('../middleware');
 
 // Initialize the payment controller
 const paymentController = new PaymentController();
 
 // Route to create Stripe checkout session
-router.post('/create-checkout-session', async (req, res) => {
+router.post('/create-checkout-session', authenticate, async (req, res) => {
   try {
     // The body is already parsed by express.json(), so we need to reconstruct it
     const rawBody = JSON.stringify(req.body);
@@ -51,7 +52,7 @@ router.post('/webhook', async (req, res) => {
 });
 
 // Route to get payment status from Stripe
-router.get('/status/:sessionId', async (req, res) => {
+router.get('/status/:sessionId', authenticate, async (req, res) => {
   try {
     await paymentController.getPaymentStatus(req, res);
   } catch (error) {
@@ -61,7 +62,7 @@ router.get('/status/:sessionId', async (req, res) => {
 });
 
 // Route to get all payments (admin purposes)
-router.get('/all', async (req, res) => {
+router.get('/all', authenticate, async (req, res) => {
   try {
     await paymentController.getAllPayments(req, res);
   } catch (error) {

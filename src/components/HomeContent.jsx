@@ -182,15 +182,32 @@ export default function HomeContent() {
               <Button
                 onClick={async () => {
                     try{
+                    // Get the current authenticated user
+                    const userCredential = auth.currentUser;
+                    if (!userCredential) {
+                      console.error("❌ No authenticated user found");
+                      return;
+                    }
+
+                    // Get the ID token for authentication
+                    const token = await userCredential.getIdToken();
+                    
                     console.log("🔍 Full URL being called:", `${import.meta.env.VITE_BACKEND_BASE_URL}/payment/create-checkout-session`);
                     console.log("🔍 Backend base URL:", import.meta.env.VITE_BACKEND_BASE_URL);
+                    
                     const response = await axios.post(`${import.meta.env.VITE_BACKEND_BASE_URL}/payment/create-checkout-session`, {
                       amount: 1000,
                       currency: "usd",
                       description: "Home staging service",
                       successUrl: `${window.location.origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
                       cancelUrl: `${window.location.origin}/payment-cancelled`,
+                    }, {
+                      headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                      }
                     });
+                    
                     console.log("🔍 Payment response:", response.data);
 
                     // Go the stripe checkout page

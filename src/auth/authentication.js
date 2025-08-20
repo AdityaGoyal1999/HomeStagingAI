@@ -1,26 +1,38 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "../firebase"
-import { db } from "../firebase"
-import { setDoc, doc } from "firebase/firestore"
 
 const handleSignUp = async (email, password) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password)
         const newUser = userCredential.user;
 
-        // create user profile in firestore
-        await setDoc(doc(db, "users", newUser.uid), {
-            email: newUser.email,
-            name: newUser.displayName,
-            photoURL: newUser.photoURL,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        })
+        // Get the ID token to authenticate with our backend
+        const token = await newUser.getIdToken();
+        
+        // Create user profile through our backend API
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_BASE_URL}/user/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                email: newUser.email,
+                name: newUser.displayName || email.split('@')[0], // Fallback name
+                photoURL: newUser.photoURL || null
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to create user profile');
+        }
+
+        console.log('✅ User profile created successfully with credits');
         
         return newUser;
     }
     catch(error) {
-        console.error('Error', error.message)
+        console.error('Error during signup:', error.message)
         return false;
     }
 }

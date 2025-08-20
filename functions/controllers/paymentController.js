@@ -17,6 +17,15 @@ class PaymentController {
         });
       }
 
+      // Get user ID from authenticated request
+      const userId = req.user?.uid;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          error: 'User not authenticated'
+        });
+      }
+
       // Create Stripe checkout session
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
@@ -38,7 +47,8 @@ class PaymentController {
         cancel_url: cancelUrl,
         metadata: {
           description: description || 'Home Staging Service',
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          userId: userId  // Store user ID for webhook processing
         }
       });
 
@@ -92,6 +102,10 @@ class PaymentController {
         console.log('🔍 Payment completed for session:', session.id);
         console.log('🔍 Session amount:', session.amount_total);
         console.log('🔍 Session status:', session.payment_status);
+        
+        // Add credits to user - checkout.session.completed means payment was successful
+        await this.addCreditsToUser(session);
+        
         console.log("🔍 checkout.session.completed processing complete");
         break;
         
@@ -122,6 +136,65 @@ class PaymentController {
 
     console.log("🔍 Webhook processed successfully!");
     res.status(200).json({ received: true });
+  }
+
+  /**
+   * Add credits to user after successful payment
+   * @param {Object} session - Stripe checkout session object
+   */
+  async addCreditsToUser(session) {
+    try {
+      const userId = session.metadata?.userId;
+      
+      if (!userId) {
+        console.error('❌ No userId found in session metadata:', session.id);
+        return;
+      }
+
+      console.log(`🔍 Adding credits to user: ${userId}`);
+      console.log(`🔍 Session metadata:`, session.metadata);
+      
+      // Import UserService to manage user credits
+      const UserService = require('../services/userService');
+      const userService = new UserService();
+      
+      console.log(`🔍 UserService created successfully`);
+      
+      // First, check if user exists
+      try {
+        const userProfile = await userService.getUserProfile(userId);
+        console.log(`🔍 User profile found:`, userProfile);
+        console.log(`🔍 Current credits:`, userProfile.credits);
+      } catch (profileError) {
+        console.log(`🔍 User profile not found, creating user:`, profileError.message);
+        // Create user if they don't exist
+        await userService.createUserIfNotExists(userId, {
+          email: session.customer_details?.email || 'unknown@email.com',
+          name: session.customer_details?.name || 'Unknown User'
+        });
+        console.log(`🔍 User created successfully`);
+      }
+      
+      // Get current user credits
+      console.log(`🔍 Getting current credits...`);
+      const currentCredits = await userService.getUserCredits(userId);
+      console.log(`🔍 Current credits retrieved:`, currentCredits);
+      
+      const newCredits = currentCredits + 100; // Add 100 credits
+      console.log(`🔍 New credits total:`, newCredits);
+      
+      // Update user credits
+      console.log(`🔍 Updating user credits...`);
+      const result = await userService.updateUserCredits(userId, newCredits);
+      console.log(`🔍 Credits update result:`, result);
+      
+      console.log(`✅ Successfully added 100 credits to user ${userId}. New total: ${newCredits}`);
+      
+    } catch (error) {
+      console.error('❌ Error adding credits to user:', error);
+      console.error('❌ Error stack:', error.stack);
+      // Don't throw error to avoid webhook failure
+    }
   }
 
   /**

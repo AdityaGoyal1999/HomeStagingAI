@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { auth } from '../firebase';
 
 const StripeCheckout = ({ amount = 1000, description = "Home Staging Service" }) => {
   const [loading, setLoading] = useState(false);
@@ -9,11 +10,22 @@ const StripeCheckout = ({ amount = 1000, description = "Home Staging Service" })
     setError(null);
 
     try {
+      // Get the current authenticated user
+      const userCredential = auth.currentUser;
+      if (!userCredential) {
+        setError('User not authenticated');
+        return;
+      }
+
+      // Get the ID token for authentication
+      const token = await userCredential.getIdToken();
+
       // Call your backend to create a checkout session
       const response = await fetch('/api/payments/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           amount: amount, // Amount in cents (e.g., 1000 = $10.00)

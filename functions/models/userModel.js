@@ -25,8 +25,17 @@ class UserModel {
 
   async createUser(userId, userData) {
     const userRef = this.db.collection(this.collection).doc(userId);
-    await userRef.set(userData);
-    return { id: userId, ...userData };
+    
+    // Ensure credits field has a default value
+    const userDataWithDefaults = {
+      credits: 0, // Default credits value
+      ...userData
+    };
+
+    console.log("🔍 User data with defaults:", userDataWithDefaults);
+    
+    await userRef.set(userDataWithDefaults);
+    return { id: userId, ...userDataWithDefaults };
   }
 
   async updateUser(userId, updateData) {
@@ -40,6 +49,17 @@ class UserModel {
     return user?.photos || [];
   }
 
+  async getUserCredits(userId) {
+    const user = await this.getUserById(userId);
+    return user?.credits || 0;
+  }
+
+  async updateUserCredits(userId, newCredits) {
+    const userRef = this.db.collection(this.collection).doc(userId);
+    await userRef.update({ credits: newCredits });
+    return { id: userId, credits: newCredits };
+  }
+
 
   // TODO: Check why we need this function
   async createUserIfNotExists(userId) {
@@ -48,7 +68,8 @@ class UserModel {
       // Create a basic user record
       await this.createUser(userId, {
         createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now()
+        updatedAt: Timestamp.now(),
+        credits: 0 // Default credits value
       });
     }
     return user;
