@@ -84,6 +84,7 @@ export default function HomeContent() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [selectedStyle, setSelectedStyle] = useState("");
     const { photos, setPhotos } = useOutletContext();
+    const [fileUploading, setFileUploading] = useState(false);
     const navigate = useNavigate();
 
     // console.log("This is the photos", photos);
@@ -108,6 +109,7 @@ export default function HomeContent() {
         }
         try {
 
+            setFileUploading(true);
             const userCredential = auth.currentUser
             if (!userCredential) return;
             
@@ -123,7 +125,7 @@ export default function HomeContent() {
                     "Authorization": `Bearer ${token}`,
                 },
             });
-
+            setFileUploading(false);
             if (response.status === 200) {
                 console.log('Upload response:', response.data);
                 
@@ -152,6 +154,7 @@ export default function HomeContent() {
             }
             
         } catch (error) {
+            setFileUploading(false);
             console.error("Error uploading photo:", error);
         }
     };
@@ -159,7 +162,51 @@ export default function HomeContent() {
     const isEmpty = !photos || photos.length === 0;
 
     return (
-        <Box w="100%">
+        <Box w="100%" position="relative">
+            {/* Full-screen loading overlay */}
+            {fileUploading && (
+                <Box
+                    position="fixed"
+                    top="0"
+                    left="0"
+                    right="0"
+                    bottom="0"
+                    zIndex="9999"
+                    backdropFilter="blur(8px)"
+                    backgroundColor="rgba(0, 0, 0, 0.3)"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                >
+                    <Box
+                        backgroundColor="white"
+                        borderRadius="lg"
+                        padding="8"
+                        boxShadow="2xl"
+                        textAlign="center"
+                        maxW="sm"
+                        mx="4"
+                    >
+                        <Box
+                            className="animate-spin"
+                            width="16"
+                            height="16"
+                            border="4px solid"
+                            borderColor="blue.200"
+                            borderTopColor="blue.500"
+                            borderRadius="full"
+                            mx="auto"
+                            mb="4"
+                        />
+                        <Text fontSize="lg" fontWeight="semibold" color="gray.700" mb="2">
+                            Processing Your Photo
+                        </Text>
+                        <Text fontSize="sm" color="gray.500">
+                            Uploading and generating AI staging... This may take a few minutes.
+                        </Text>
+                    </Box>
+                </Box>
+            )}
             <Heading size="lg" mb={8} mt={2}>
                 All photos
             </Heading>
