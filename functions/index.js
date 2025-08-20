@@ -39,45 +39,38 @@ app.use(cors);
 // Handle preflight requests
 app.options('*', cors);
 
-// Custom middleware to handle body parsing conditionally
 app.use((req, res, next) => {
-  console.log("🔍 Middleware: Processing request for path:", req.path);
-  
-  if (req.path === '/payment/webhook') {
-    console.log("🔍 Middleware: Webhook route detected, capturing raw body...");
-    
-    // For webhook routes, capture raw body and skip JSON parsing
-    let data = '';
-    req.setEncoding('utf8');
-    
-    req.on('data', chunk => {
-      console.log("🔍 Middleware: Received chunk, length:", chunk.length);
-      data += chunk;
-    });
-    
-    req.on('end', () => {
-      console.log("🔍 Middleware: Body capture complete, total length:", data.length);
-      req.rawBody = Buffer.from(data, 'utf8');
-      console.log("🔍 Middleware: Calling next() for webhook route");
-      next();
-    });
-    
-    req.on('error', (err) => {
-      console.error("🔍 Middleware: Error capturing body:", err);
-      next(err);
-    });
-  } else {
-    console.log("🔍 Middleware: Non-webhook route, calling next() immediately");
-    // For non-webhook routes, continue to normal body parsing
-    next();
+  if (req.originalUrl === "/payment/webhook") {
+    req.body = req.rawBody;
+    console.log("THIS IS THE RAW BODY", req.rawBody)
+  }
+  next();
+})
+
+// IMPORTANT: Webhook route must be registered BEFORE all other middleware to preserve raw body
+app.post('/payment/webhook',  express.raw({ type: '*/*' }), (req, res) => {
+  // Manually capture raw body without any parsing
+  console.log("🔍 === WEBHOOK REQUEST DEBUG ===");
+  console.log("🔍 Request body type:", typeof req.body);
+  console.log("🔍 Is Buffer?", req.body instanceof Buffer);
+  console.log("🔍 Body length:", req.body ? req.body.length : 'undefined');
+  console.log("🔍 Stripe signature header:", req.headers['stripe-signature']);
+
+  try {
+    const PaymentController = require('./controllers/paymentController');
+    const paymentController = new PaymentController();
+
+    // Now just pass req, res directly
+    paymentController.handleWebhook(req, res);
+  } catch (error) {
+    console.error('Error in webhook route:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// Use JSON parsing for non-webhook routes
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-app.use(fileParser({
+// Routes with body parsing middleware applied specifically
+app.use('/user', bodyParser.json(), bodyParser.urlencoded({ extended: true }), userRoutes);
+app.use('/photos', bodyParser.json(), bodyParser.urlencoded({ extended: true }), fileParser({
   rawBodyOptions: {
     limit: '15mb', 
   },
@@ -86,14 +79,8 @@ app.use(fileParser({
       fields: 2
     }
   },
-}));
-
-// Routes
-app.use('/user', userRoutes);
-app.use('/photos', photoRoutes);
-app.use('/payment', paymentRoutes);
-
-
+}), photoRoutes);
+app.use('/payment', bodyParser.json(), bodyParser.urlencoded({ extended: true }), paymentRoutes);
 
 // Legacy routes for backward compatibility
 app.get("/getProfile", authenticate, async (req, res) => {
@@ -120,7 +107,16 @@ app.get('/getPhotos', authenticate, async (req, res) => {
   }
 });
 
-app.post("/uploadPhoto", authenticate, validateFileUpload, validateStyle, async (req, res) => {
+app.post("/uploadPhoto", bodyParser.json(), bodyParser.urlencoded({ extended: true }), fileParser({
+  rawBodyOptions: {
+    limit: '15mb', 
+  },
+  busboyOptions: {
+    limits: {
+      fields: 2
+    }
+  },
+}), authenticate, validateFileUpload, validateStyle, async (req, res) => {
   try {
     // Import the photo controller to handle the request
     const PhotoController = require('./controllers/photoController');

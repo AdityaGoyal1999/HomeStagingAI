@@ -63,18 +63,18 @@ class PaymentController {
    * @param {Object} req - Express request object
    * @param {Object} res - Express response object
    */
-  async handleWebhook(content, res) {
+  async handleWebhook(req, res) {
     console.log("🔍 Webhook received");
-    console.log("🔍 Content Headers:", content.headers);
-    console.log("🔍 Content Body:", content.body);
-    const sig = content.headers['stripe-signature'];
+    console.log("🔍 Content Headers:", req.headers);
+    console.log("🔍 Content Body:", req.body);
+    const sig = req.headers['stripe-signature'];
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     let event;
 
     try {
       console.log("🔍 About to verify Stripe signature...");
-      event = stripe.webhooks.constructEvent(content.body, sig, endpointSecret);
+      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
       console.log("🔍 Stripe signature verification successful!");
     } catch (err) {
       console.error('❌ Webhook signature verification failed:', err.message);
@@ -92,6 +92,7 @@ class PaymentController {
         console.log('🔍 Payment completed for session:', session.id);
         console.log('🔍 Session amount:', session.amount_total);
         console.log('🔍 Session status:', session.payment_status);
+        console.log("🔍 checkout.session.completed processing complete");
         break;
         
         // Here you can add logic to:
@@ -100,8 +101,6 @@ class PaymentController {
         // - Update order status
         // - etc.
         
-        console.log("🔍 checkout.session.completed processing complete");
-        break;
       
       case 'payment_intent.succeeded':
         console.log("🔍 Processing payment_intent.succeeded...");
@@ -121,9 +120,8 @@ class PaymentController {
         console.log(`🔍 Unhandled event type: ${event.type}`);
     }
 
-    console.log("🔍 About to send response...");
-    res.json({ received: true });
-    console.log("🔍 Response sent successfully!");
+    console.log("🔍 Webhook processed successfully!");
+    res.status(200).json({ received: true });
   }
 
   /**
