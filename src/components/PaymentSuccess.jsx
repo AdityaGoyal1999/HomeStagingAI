@@ -1,12 +1,21 @@
+import { Button } from '@chakra-ui/react';
 import React from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
+  const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-4">
+      <Button
+        onClick={() => {
+          navigate('/home')
+        }}
+      >
+        Return Home
+      </Button>
       <div className="max-w-md mx-auto p-8 bg-white rounded-lg shadow-lg text-center">
         {/* Success Icon */}
         <div className="text-green-500 text-6xl mb-6">✅</div>

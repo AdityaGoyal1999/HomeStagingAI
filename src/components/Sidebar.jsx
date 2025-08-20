@@ -105,6 +105,9 @@ export default function Sidebar() {
           <Text fontSize="sm" fontWeight="semibold" display={{ base: "none", md: "block" }} overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
             {user.user.email}
           </Text>
+          {/* <Text fontSize="sm" fontWeight="semibold" display={{ base: "none", md: "block" }} overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
+            Credits: {user.user.credits}
+          </Text> */}
         </Box>
         {/* <Button size="sm" onClick={handleLogout}>
           Logout
