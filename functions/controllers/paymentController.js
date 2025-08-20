@@ -84,10 +84,16 @@ class PaymentController {
 
     try {
       console.log("🔍 About to verify Stripe signature...");
+      console.log("🔍 Endpoint secret exists:", !!endpointSecret);
+      console.log("🔍 Signature header exists:", !!sig);
+      console.log("🔍 Body type in controller:", typeof req.body);
+      console.log("🔍 Body is Buffer in controller:", req.body instanceof Buffer);
+      
       event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
       console.log("🔍 Stripe signature verification successful!");
     } catch (err) {
       console.error('❌ Webhook signature verification failed:', err.message);
+      console.error('❌ Error details:', err);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 

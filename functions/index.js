@@ -32,29 +32,39 @@ const { fileParser } = require('express-multipart-file-parser');
 initializeFirebase();
 
 const app = express();
-
-// Middleware
 app.use(cors);
 
-// Handle preflight requests
-app.options('*', cors);
-
+// Test middleware to verify CORS doesn't affect body
 app.use((req, res, next) => {
   if (req.originalUrl === "/payment/webhook") {
     req.body = req.rawBody;
-    console.log("THIS IS THE RAW BODY", req.rawBody)
+    
+    // Convert rawHeaders to headers for Stripe signature verification
+    if (req.rawHeaders && !req.headers['stripe-signature']) {
+      for (let i = 0; i < req.rawHeaders.length; i += 2) {
+        const key = req.rawHeaders[i].toLowerCase();
+        const value = req.rawHeaders[i + 1];
+        req.headers[key] = value;
+      }
+      console.log("🔍 Headers converted from rawHeaders");
+      console.log("🔍 Stripe signature found:", !!req.headers['stripe-signature']);
+    }
+    
+    console.log("🔍 CORS middleware - Body is Buffer:", req.body instanceof Buffer);
   }
   next();
-})
+});
 
-// IMPORTANT: Webhook route must be registered BEFORE all other middleware to preserve raw body
-app.post('/payment/webhook',  express.raw({ type: '*/*' }), (req, res) => {
+
+// IMPORTANT: Webhook route must be registered BEFORE ALL middleware to preserve raw body
+app.post('/payment/webhook', express.raw({ type: '*/*' }), (req, res) => {
   // Manually capture raw body without any parsing
   console.log("🔍 === WEBHOOK REQUEST DEBUG ===");
   console.log("🔍 Request body type:", typeof req.body);
   console.log("🔍 Is Buffer?", req.body instanceof Buffer);
   console.log("🔍 Body length:", req.body ? req.body.length : 'undefined');
   console.log("🔍 Stripe signature header:", req.headers['stripe-signature']);
+  console.log("🔍 Content-Type header:", req.headers['content-type']);
 
   try {
     const PaymentController = require('./controllers/paymentController');
@@ -67,6 +77,13 @@ app.post('/payment/webhook',  express.raw({ type: '*/*' }), (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+// Middleware (registered AFTER webhook route to avoid interference)
+
+
+
+// Handle preflight requests
+app.options('*', cors);
 
 // Routes with body parsing middleware applied specifically
 app.use('/user', bodyParser.json(), bodyParser.urlencoded({ extended: true }), userRoutes);

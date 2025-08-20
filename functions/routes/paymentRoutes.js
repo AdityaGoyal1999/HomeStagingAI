@@ -31,24 +31,7 @@ router.post('/create-checkout-session', authenticate, async (req, res) => {
 
 // Route to handle Stripe webhooks (for payment completion)
 router.post('/webhook', async (req, res) => {
-  try {
-    // console.log("🔍 === WEBHOOK REQUEST DEBUG ===");
-    // console.log("🔍 Request body type:", typeof req.body);
-    // console.log("🔍 Is Buffer?", req.body instanceof Buffer);
-    // console.log("🔍 Body length:", req.body ? req.body.length : 'undefined');
-    // console.log("🔍 Stripe signature header:", req.headers['stripe-signature']);
-    
-    // body-parser.raw() should give us a Buffer
-    const webhookContent = {
-      headers: req.headers,
-      body: req.body
-    };
-
-    await paymentController.handleWebhook(webhookContent, res);
-  } catch (error) {
-    console.error('Error in webhook route:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+  res.status(404).json({ error: 'Webhook endpoint moved to /payment/webhook' });
 });
 
 // Route to get payment status from Stripe
