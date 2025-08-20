@@ -42,4 +42,13 @@ router.post('/generate-variations',
   photoController.generateStagedVariations.bind(photoController)
 );
 
+/**
+ * GET /photos/credit-costs
+ * Get credit costs for different photo operations
+ */
+router.get('/credit-costs', 
+  authenticate, 
+  photoController.getCreditCosts.bind(photoController)
+);
+
 module.exports = router; 

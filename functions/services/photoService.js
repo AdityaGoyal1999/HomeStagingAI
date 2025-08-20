@@ -48,6 +48,10 @@ class PhotoService {
         throw new Error('File and style are required');
       }
 
+      // Check if user has sufficient credits before starting generation
+      await this.checkSufficientCredits(userId);
+      console.log('✅ User has sufficient credits for AI generation');
+
       // Step 1: Upload original file to Firebase Storage
       console.log('Step 1: Uploading to Firebase Storage...');
       const originalPhotoURL = await this.storageService.uploadFile(file, userId);
@@ -102,6 +106,10 @@ class PhotoService {
         await this.userModel.appendGeneratedUrlToPhoto(userId, originalPhotoData.id, permanentStagedImageURL);
         console.log('✅ Appended permanent generated URL to original photo');
 
+        // Deduct credits for successful AI generation
+        await this.deductCreditsForGeneration(userId);
+        console.log('✅ Credits deducted for AI generation');
+
         stagedImageURL = permanentStagedImageURL;
       } catch (stagingError) {
         console.error('❌ Error during staging:', stagingError.message);
@@ -119,9 +127,72 @@ class PhotoService {
     }
   }
 
+  /**
+   * Check if user has sufficient credits for AI generation
+   * @param {string} userId - User ID
+   * @param {number} requiredCredits - Number of credits required (default: 1)
+   */
+  async checkSufficientCredits(userId, requiredCredits = 1) {
+    try {
+      // Import UserService to manage user credits
+      const UserService = require('./userService');
+      const userService = new UserService();
+      
+      // Get current user credits
+      const currentCredits = await userService.getUserCredits(userId);
+      
+      if (currentCredits < requiredCredits) {
+        throw new Error(`Insufficient credits. Required: ${requiredCredits}, Available: ${currentCredits}`);
+      }
+      
+      console.log(`✅ User ${userId} has sufficient credits: ${currentCredits} >= ${requiredCredits}`);
+      return currentCredits;
+    } catch (error) {
+      console.error('❌ Error checking credits:', error);
+      throw new Error(`Failed to check credits: ${error.message}`);
+    }
+  }
+
+  /**
+   * Deduct credits from user for AI generation
+   * @param {string} userId - User ID
+   * @param {number} creditCost - Number of credits to deduct (default: 1)
+   */
+  async deductCreditsForGeneration(userId, creditCost = 5) {
+    try {
+      // Import UserService to manage user credits
+      const UserService = require('./userService');
+      const userService = new UserService();
+      
+      // Get current user credits
+      const currentCredits = await userService.getUserCredits(userId);
+      
+      if (currentCredits < creditCost) {
+        throw new Error(`Insufficient credits. Required: ${creditCost}, Available: ${currentCredits}`);
+      }
+      
+      // Calculate new credits
+      const newCredits = currentCredits - creditCost;
+      
+      // Update user credits
+      await userService.updateUserCredits(userId, newCredits);
+      
+      console.log(`✅ Deducted ${creditCost} credit(s) from user ${userId}. New balance: ${newCredits}`);
+      
+      return newCredits;
+    } catch (error) {
+      console.error('❌ Error deducting credits:', error);
+      throw new Error(`Failed to deduct credits: ${error.message}`);
+    }
+  }
+
   async generateStagedImage(originalPhotoURL, userId, style = 'modern', relatedPhotoId = null) {
     try {
       console.log('Starting AI staging process...');
+
+      // Check if user has sufficient credits before starting generation
+      await this.checkSufficientCredits(userId);
+      console.log('✅ User has sufficient credits for AI generation');
 
       // Generate staged image using Replicate
       const replicateImageUrl = await this.replicateService.generateStagedImage(originalPhotoURL, style);
@@ -151,6 +222,10 @@ class PhotoService {
       // Add staged photo to user's photos
       await this.userModel.addPhotoToUser(userId, stagedPhotoData);
 
+      // Deduct credits for successful AI generation
+      await this.deductCreditsForGeneration(userId);
+      console.log('✅ Credits deducted for AI generation');
+
       return { stagedURL: permanentStagedImageURL, stagedPhotoData };
     } catch (error) {
       throw new Error(`Failed to generate staged image: ${error.message}`);
@@ -165,6 +240,9 @@ class PhotoService {
       // Then generate the staged version
       const { stagedURL, stagedPhotoData } = await this.generateStagedImage(originalURL, userId, style);
 
+      // Note: Credits are deducted in both uploadPhoto and generateStagedImage methods
+      // So this method doesn't need additional credit deduction
+
       return {
         original: { url: originalURL, data: originalPhotoData },
         staged: { url: stagedURL, data: stagedPhotoData }
@@ -177,6 +255,10 @@ class PhotoService {
   async generateMultipleStagedVariations(originalPhotoURL, userId, style = 'modern', count = 3) {
     try {
       console.log(`Generating ${count} staged variations...`);
+
+      // Check if user has sufficient credits for all variations
+      await this.checkSufficientCredits(userId, count);
+      console.log(`✅ User has sufficient credits for ${count} variations`);
 
       // Generate multiple variations
       const replicateImageURLs = await this.replicateService.generateMultipleVariations(originalPhotoURL, style, count);
@@ -203,6 +285,10 @@ class PhotoService {
           this.storageService.validatePhotoData(stagedPhotoData);
           await this.userModel.addPhotoToUser(userId, stagedPhotoData);
           
+          // Deduct credits for successful AI generation
+          await this.deductCreditsForGeneration(userId);
+          console.log(`✅ Credits deducted for variation ${i + 1}`);
+          
           variations.push({ url: permanentStagedImageURL, data: stagedPhotoData });
         } catch (variationError) {
           console.error(`❌ Error processing variation ${i + 1}:`, variationError.message);
@@ -215,6 +301,19 @@ class PhotoService {
     } catch (error) {
       throw new Error(`Failed to generate variations: ${error.message}`);
     }
+  }
+
+  /**
+   * Get credit costs for different operations
+   * @returns {Object} Credit costs for different operations
+   */
+  getCreditCosts() {
+    return {
+      singleGeneration: 5,
+      multipleVariations: 5, // per variation
+      uploadAndStage: 5, // 1 for upload + 1 for generation
+      description: 'Credits are deducted per AI generation operation'
+    };
   }
 
   async getUserPhotos(userId) {
