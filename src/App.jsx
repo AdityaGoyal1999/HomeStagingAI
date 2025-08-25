@@ -34,6 +34,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/paymentDetails" element={<PaymentSuccess />} />
         <Route path="/home" element={user? <Home />: <Navigate to="/" />}>
           <Route index element={<HomeContent />} />
           <Route path="settings" element={<Settings />} />

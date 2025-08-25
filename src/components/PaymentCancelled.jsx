@@ -1,44 +1,43 @@
+import { Box, Button, Text } from '@chakra-ui/react';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const PaymentCancelled = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md mx-auto p-8 bg-white rounded-lg shadow-lg text-center">
-        {/* Cancelled Icon */}
-        <div className="text-yellow-500 text-6xl mb-6">❌</div>
-        
-        {/* Main Message */}
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Payment Cancelled
-        </h1>
-        
-        <p className="text-gray-600 mb-6">
-          Your payment was cancelled. No charges were made to your account.
-        </p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-4">
 
-        {/* Action Buttons */}
-        <div className="space-y-3">
-          <button
-            onClick={() => window.location.href = '/'}
-            className="w-full py-3 px-6 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
-          >
-            Return to Home
-          </button>
-          
-          <button
-            onClick={() => window.history.back()}
-            className="w-full py-2 px-6 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
+      <Text fontSize="6xl" fontWeight="bold">Payment Cancelled</Text>
+      <Text fontSize="2xl">Your payment was cancelled. No charges were made to your account.</Text>
 
-        {/* Additional Info */}
-        <p className="text-xs text-gray-500 mt-6">
-          If you have any questions about our services or pricing, 
-          please don't hesitate to contact our support team.
-        </p>
-      </div>
+      <Button
+        colorPalette="blue"
+        onClick={() => {
+          navigate('/home')
+        }}
+      >
+        Return Home
+      </Button>
+
+      <Box 
+      backgroundColor="white" 
+      display="flex-col" 
+      justifyContent="center" 
+      alignItems="center" gap={8} 
+      border="1px solid" 
+      borderColor="gray.200" 
+      borderRadius="md" p={8}
+      shadow="md"
+      >
+
+        <Text fontSize="2xl" fontWeight="bold">❌ Payment Cancelled</Text>
+        <Box display="flex" flexDirection="column" gap={2} p={4}>
+          <Text>No charges were made to your account. You can try again anytime.</Text>
+        </Box>
+        
+      </Box>
+      
     </div>
   );
 };
