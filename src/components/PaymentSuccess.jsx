@@ -1,71 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Button } from '@chakra-ui/react';
+import React from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
-  const [paymentDetails, setPaymentDetails] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
   const sessionId = searchParams.get('session_id');
-
-  useEffect(() => {
-    if (sessionId) {
-      fetchPaymentStatus();
-    } else {
-      setLoading(false);
-    }
-  }, [sessionId]);
-
-  const fetchPaymentStatus = async () => {
-    try {
-      const response = await fetch(`/api/payments/status/${sessionId}`);
-      const data = await response.json();
-
-      if (data.success) {
-        setPaymentDetails(data);
-      } else {
-        setError(data.error || 'Failed to fetch payment details');
-      }
-    } catch (err) {
-      setError('Network error. Please try again.');
-      console.error('Payment status error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Verifying your payment...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Payment Verification Failed</h1>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.href = '/'}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            Return Home
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-4">
+      <Button
+        onClick={() => {
+          navigate('/home')
+        }}
+      >
+        Return Home
+      </Button>
       <div className="max-w-md mx-auto p-8 bg-white rounded-lg shadow-lg text-center">
         {/* Success Icon */}
         <div className="text-green-500 text-6xl mb-6">✅</div>
@@ -79,29 +29,13 @@ const PaymentSuccess = () => {
           Thank you for your purchase. Your payment has been processed successfully.
         </p>
 
-        {/* Payment Details */}
-        {paymentDetails && (
+        {/* Session ID for reference */}
+        {sessionId && (
           <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
-            <h3 className="font-semibold text-gray-800 mb-3">Payment Details:</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Amount:</span>
-                <span className="font-medium">
-                  ${(paymentDetails.amount / 100).toFixed(2)} {paymentDetails.currency.toUpperCase()}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Status:</span>
-                <span className="text-green-600 font-medium capitalize">
-                  {paymentDetails.status}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Date:</span>
-                <span className="font-medium">
-                  {new Date(paymentDetails.createdAt).toLocaleDateString()}
-                </span>
-              </div>
+            <h3 className="font-semibold text-gray-800 mb-3">Transaction Reference:</h3>
+            <div className="text-sm">
+              <span className="text-gray-600">Session ID:</span>
+              <span className="font-mono text-gray-800 ml-2 break-all">{sessionId}</span>
             </div>
           </div>
         )}

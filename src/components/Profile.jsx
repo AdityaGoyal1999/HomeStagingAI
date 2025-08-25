@@ -23,6 +23,9 @@ export default function Profile() {
             <Heading size="md">{displayName}</Heading>
             <Text color="gray.600">{user?.email || "—"}</Text>
         </Box>
+        <Box>
+            <Text>Credits: {user?.credits}</Text>
+        </Box>
     </Box>
   );
 }

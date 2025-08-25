@@ -29,6 +29,24 @@ class UserService {
     }
   }
 
+  async getUserCredits(userId) {
+    try {
+      const credits = await this.userModel.getUserCredits(userId);
+      return credits;
+    } catch (error) {
+      throw new Error(`Failed to get user credits: ${error.message}`);
+    }
+  }
+
+  async updateUserCredits(userId, newCredits) {
+    try {
+      const result = await this.userModel.updateUserCredits(userId, newCredits);
+      return result;
+    } catch (error) {
+      throw new Error(`Failed to update user credits: ${error.message}`);
+    }
+  }
+
   async createUserIfNotExists(userId, userData = {}) {
     try {
       let user = await this.userModel.getUserById(userId);
@@ -37,7 +55,8 @@ class UserService {
         user = await this.userModel.createUser(userId, {
           ...userData,
           createdAt: Timestamp.now(),
-          photos: []
+          photos: [],
+          credits: 0 // Default credits value
         });
       }
       

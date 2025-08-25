@@ -45,6 +45,16 @@ class PhotoController {
       });
     } catch (error) {
       console.error("Error uploading photo:", error);
+      
+      // Handle insufficient credits error specifically
+      if (error.message.includes('Insufficient credits')) {
+        return res.status(402).json({ 
+          error: error.message,
+          code: 'INSUFFICIENT_CREDITS',
+          message: 'You need more credits to generate AI images. Please purchase more credits.'
+        });
+      }
+      
       res.status(500).json({ error: error.message });
     }
   }
@@ -72,6 +82,16 @@ class PhotoController {
       });
     } catch (error) {
       console.error("Error uploading and staging photo:", error);
+      
+      // Handle insufficient credits error specifically
+      if (error.message.includes('Insufficient credits')) {
+        return res.status(402).json({ 
+          error: error.message,
+          code: 'INSUFFICIENT_CREDITS',
+          message: 'You need more credits to generate AI images. Please purchase more credits.'
+        });
+      }
+      
       res.status(500).json({ error: error.message });
     }
   }
@@ -99,6 +119,33 @@ class PhotoController {
       });
     } catch (error) {
       console.error("Error generating variations:", error);
+      
+      // Handle insufficient credits error specifically
+      if (error.message.includes('Insufficient credits')) {
+        return res.status(402).json({ 
+          error: error.message,
+          code: 'INSUFFICIENT_CREDITS',
+          message: 'You need more credits to generate AI images. Please purchase more credits.'
+        });
+      }
+      
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  /**
+   * Get credit costs for different photo operations
+   */
+  async getCreditCosts(req, res) {
+    try {
+      const creditCosts = this.photoService.getCreditCosts();
+      
+      res.status(200).json({
+        success: true,
+        creditCosts
+      });
+    } catch (error) {
+      console.error("Error getting credit costs:", error);
       res.status(500).json({ error: error.message });
     }
   }

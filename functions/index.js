@@ -12,6 +12,7 @@ const { errorHandler, authenticate, validateFileUpload, validateStyle } = requir
 const { userRoutes, photoRoutes, paymentRoutes } = require('./routes');
 
 const express = require("express");
+const bodyParser = require("body-parser");
 const cors = require("cors")({
   origin: [
     'http://localhost:5173', // Vite dev server
@@ -31,17 +32,62 @@ const { fileParser } = require('express-multipart-file-parser');
 initializeFirebase();
 
 const app = express();
-
-// Middleware
 app.use(cors);
+
+// Test middleware to verify CORS doesn't affect body
+app.use((req, res, next) => {
+  if (req.originalUrl === "/payment/webhook") {
+    req.body = req.rawBody;
+    
+    // Convert rawHeaders to headers for Stripe signature verification
+    if (req.rawHeaders && !req.headers['stripe-signature']) {
+      for (let i = 0; i < req.rawHeaders.length; i += 2) {
+        const key = req.rawHeaders[i].toLowerCase();
+        const value = req.rawHeaders[i + 1];
+        req.headers[key] = value;
+      }
+      console.log("🔍 Headers converted from rawHeaders");
+      console.log("🔍 Stripe signature found:", !!req.headers['stripe-signature']);
+    }
+    
+    console.log("🔍 CORS middleware - Body is Buffer:", req.body instanceof Buffer);
+  }
+  next();
+});
+
+
+// IMPORTANT: Webhook route must be registered BEFORE ALL middleware to preserve raw body
+app.post('/payment/webhook', express.raw({ type: '*/*' }), (req, res) => {
+  // Manually capture raw body without any parsing
+  console.log("🔍 === WEBHOOK REQUEST DEBUG ===");
+  console.log("🔍 Request body type:", typeof req.body);
+  console.log("🔍 Is Buffer?", req.body instanceof Buffer);
+  console.log("🔍 Body length:", req.body ? req.body.length : 'undefined');
+  console.log("🔍 Stripe signature header:", req.headers['stripe-signature']);
+  console.log("🔍 Content-Type header:", req.headers['content-type']);
+
+  try {
+    const PaymentController = require('./controllers/paymentController');
+    const paymentController = new PaymentController();
+
+    // Now just pass req, res directly
+    paymentController.handleWebhook(req, res);
+  } catch (error) {
+    console.error('Error in webhook route:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Middleware (registered AFTER webhook route to avoid interference)
+
+
 
 // Handle preflight requests
 app.options('*', cors);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use(fileParser({
+// Routes with body parsing middleware applied specifically
+app.use('/user', bodyParser.json(), bodyParser.urlencoded({ extended: true }), userRoutes);
+app.use('/photos', bodyParser.json(), bodyParser.urlencoded({ extended: true }), fileParser({
   rawBodyOptions: {
     limit: '15mb', 
   },
@@ -50,14 +96,8 @@ app.use(fileParser({
       fields: 2
     }
   },
-}));
-
-// Routes
-app.use('/user', userRoutes);
-app.use('/photos', photoRoutes);
-app.use('/payment', paymentRoutes);
-
-
+}), photoRoutes);
+app.use('/payment', bodyParser.json(), bodyParser.urlencoded({ extended: true }), paymentRoutes);
 
 // Legacy routes for backward compatibility
 app.get("/getProfile", authenticate, async (req, res) => {
@@ -84,7 +124,16 @@ app.get('/getPhotos', authenticate, async (req, res) => {
   }
 });
 
-app.post("/uploadPhoto", authenticate, validateFileUpload, validateStyle, async (req, res) => {
+app.post("/uploadPhoto", bodyParser.json(), bodyParser.urlencoded({ extended: true }), fileParser({
+  rawBodyOptions: {
+    limit: '15mb', 
+  },
+  busboyOptions: {
+    limits: {
+      fields: 2
+    }
+  },
+}), authenticate, validateFileUpload, validateStyle, async (req, res) => {
   try {
     // Import the photo controller to handle the request
     const PhotoController = require('./controllers/photoController');

@@ -1,21 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const PaymentController = require('../controllers/paymentController');
+const { authenticate } = require('../middleware');
 
 // Initialize the payment controller
 const paymentController = new PaymentController();
 
 // Route to create Stripe checkout session
-router.post('/create-checkout-session', async (req, res) => {
+router.post('/create-checkout-session', authenticate, async (req, res) => {
   try {
     // The body is already parsed by express.json(), so we need to reconstruct it
     const rawBody = JSON.stringify(req.body);
     
     // Create a new request object with the raw body
-    const webhookReq = {
-      ...req,
-      body: rawBody
-    };
+    const successUrl = req.body.successUrl;
+    const cancelUrl = req.body.cancelUrl;
+    console.log("🔍 Success URL:", successUrl);
+    console.log("🔍 Cancel URL:", cancelUrl);
+    // const webhookReq = {
+    //   ...req,
+    //   body: rawBody,
+    // };
 
     await paymentController.createCheckoutSession(req, res);
   } catch (error) {
@@ -26,34 +31,11 @@ router.post('/create-checkout-session', async (req, res) => {
 
 // Route to handle Stripe webhooks (for payment completion)
 router.post('/webhook', async (req, res) => {
-  try {
-
-    console.log("🔍 === WEBHOOK REQUEST DEBUG ===");
-    console.log("�� Request headers:", req.headers);
-    console.log("🔍 Request body type:", typeof req.body);
-    console.log("🔍 Request body:", req.body);
-    console.log("🔍 Request body length:", req.body ? req.body.length : 'undefined');
-    console.log("🔍 Stripe signature header:", req.headers['stripe-signature']);
-    console.log("🔍 All headers keys:", Object.keys(req.headers));
-    console.log("�� === END DEBUG ===");
-    // The body is already parsed by express.json(), so we need to reconstruct it
-    const rawBody = JSON.stringify(req.body);
-    
-    // Create a new request object with the raw body
-    const webhookReq = {
-      ...req,
-      body: rawBody
-    };
-
-    await paymentController.handleWebhook(webhookReq, res);
-  } catch (error) {
-    console.error('Error in webhook route:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+  res.status(404).json({ error: 'Webhook endpoint moved to /payment/webhook' });
 });
 
 // Route to get payment status from Stripe
-router.get('/status/:sessionId', async (req, res) => {
+router.get('/status/:sessionId', authenticate, async (req, res) => {
   try {
     await paymentController.getPaymentStatus(req, res);
   } catch (error) {
@@ -63,7 +45,7 @@ router.get('/status/:sessionId', async (req, res) => {
 });
 
 // Route to get all payments (admin purposes)
-router.get('/all', async (req, res) => {
+router.get('/all', authenticate, async (req, res) => {
   try {
     await paymentController.getAllPayments(req, res);
   } catch (error) {
