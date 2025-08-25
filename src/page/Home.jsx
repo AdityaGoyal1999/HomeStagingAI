@@ -74,8 +74,9 @@ export default function Home() {
                     mt="20px"
                     height="calc(100vh - 20px)"
                     overflowY="auto"
+                    w="100%"
                 >
-                    <Box flex={1} px={{ base: 4, md: 8 }}>
+                    <Box flex={1} px={{ base: 4, md: 8 }} w="100%" h="100%">
                         <Outlet context={{ user, photos, setPhotos }} />
                     </Box>
                 </Box>

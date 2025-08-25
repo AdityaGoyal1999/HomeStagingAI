@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, CloseButton, HStack, Center, Heading, Text, VStack, FileUpload, Card, Image, SimpleGrid, Dialog, Portal, Input, Select, createListCollection } from "@chakra-ui/react";
+import { Box, Button, CloseButton, HStack, Center, Heading, Text, VStack, FileUpload, Card, Image, SimpleGrid, Dialog, Portal, Input, Select, createListCollection, Progress } from "@chakra-ui/react";
 import { HiUpload } from "react-icons/hi";
 import axios from "axios";
 import { auth } from "../firebase";
@@ -162,7 +162,7 @@ export default function HomeContent() {
     const isEmpty = !photos || photos.length === 0;
 
     return (
-        <Box w="100%" position="relative">
+        <Box w="100%" position="relative" h="100%">
             {/* Full-screen loading overlay */}
             {fileUploading && (
                 <Box
@@ -207,9 +207,9 @@ export default function HomeContent() {
                     </Box>
                 </Box>
             )}
-            <Heading size="lg" mb={8} mt={2}>
+            {/* <Heading size="lg" mb={8} mt={2}>
                 All photos
-            </Heading>
+            </Heading> */}
             <Center my={10}>
               <Dialog.Root placement="center" motionPreset="slide-in-bottom">
                 <Dialog.Trigger asChild>
@@ -270,71 +270,102 @@ export default function HomeContent() {
               </Button>
             </Center>
 
-            <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8} mb={8}>
-                {photos.map((photo) => (
-                  
-                  <Card.Root
-                      bg="white"
-                      boxShadow="md"
-                      borderRadius="md"
-                      overflow="hidden"
-                      onClick={() => {
-                          // navigate(`/photo/${photo.photoURL}`);
-                          const originalURL = encodeURIComponent(photo.photoURL);
+            <Box backgroundColor="white" p={4} className="w-full" mb={8} borderRadius="md">
+              <Box display="flex" justifyContent="space-around" alignItems="center">
+                <Heading size="lg" mb={8} mt={2}>Your Credits</Heading>
+              </Box>
+              <Box p={8} justifyContent="space-between">
+                <Progress.Root value={50} max={100}>
+                  <Progress.Track>
+                    <Progress.Range />
+                  </Progress.Track>
+                </Progress.Root>
+                <Text>You have 100 credits</Text>
+              </Box>
+            </Box>
+            
+            <Box 
+              bg="white"
+              borderRadius="md"
+              // boxShadow="md"
+              p={4} 
+              className="w-full" 
+              mb={8}>
+              <Heading size="lg" mb={8} mt={2}>Your Photos</Heading>
+              {
+                photos.length > 0? (
+                <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8} mb={8}>
+                    {photos.map((photo) => (
+                      
+                      <Card.Root
+                          bg="white"
+                          boxShadow="md"
+                          borderRadius="md"
+                          overflow="hidden"
+                          onClick={() => {
+                              // navigate(`/photo/${photo.photoURL}`);
+                              const originalURL = encodeURIComponent(photo.photoURL);
 
-                          // get the generated URLS and attach them to the image
-                          const generatedUrls = photo.generatedUrls;
-                          console.log("🔍 Photo object:", photo);
-                          console.log("🔍 Generated URLs:", generatedUrls);
-                          console.log("🔍 Generated URLs type:", typeof generatedUrls);
-                          console.log("🔍 Generated URLs is array:", Array.isArray(generatedUrls));
-                          
-                          if (!generatedUrls || !Array.isArray(generatedUrls) || generatedUrls.length === 0) {
-                              console.warn("❌ No generated URLs found, navigating with original only");
-                              navigate(`/photo?original=${originalURL}`);
-                              return;
-                          }
-                          
-                          const stagedURL = generatedUrls[0];
-                          console.log("🔍 Staged URL:", stagedURL);
-                          
-                          if (!stagedURL) {
-                              console.warn("❌ Staged URL is null/undefined, navigating with original only");
-                              navigate(`/photo?original=${originalURL}`);
-                              return;
-                          }
+                              // get the generated URLS and attach them to the image
+                              const generatedUrls = photo.generatedUrls;
+                              console.log("🔍 Photo object:", photo);
+                              console.log("🔍 Generated URLs:", generatedUrls);
+                              console.log("🔍 Generated URLs type:", typeof generatedUrls);
+                              console.log("🔍 Generated URLs is array:", Array.isArray(generatedUrls));
+                              
+                              if (!generatedUrls || !Array.isArray(generatedUrls) || generatedUrls.length === 0) {
+                                  console.warn("❌ No generated URLs found, navigating with original only");
+                                  navigate(`/photo?original=${originalURL}`);
+                                  return;
+                              }
+                              
+                              const stagedURL = generatedUrls[0];
+                              console.log("🔍 Staged URL:", stagedURL);
+                              
+                              if (!stagedURL) {
+                                  console.warn("❌ Staged URL is null/undefined, navigating with original only");
+                                  navigate(`/photo?original=${originalURL}`);
+                                  return;
+                              }
 
-                          // Use navigation state instead of search parameters to avoid URL encoding issues
-                          const navigationState = {
-                            originalURL: photo.photoURL,
-                            stagedURL: stagedURL
-                          };
-                          
-                          console.log("🚀 Navigating with state:", navigationState);
-                          console.log("🚀 Original URL length:", photo.photoURL.length);
-                          console.log("🚀 Staged URL length:", stagedURL?.length || 0);
-                          
-                          navigate('/photo', { state: navigationState });
+                              // Use navigation state instead of search parameters to avoid URL encoding issues
+                              const navigationState = {
+                                originalURL: photo.photoURL,
+                                stagedURL: stagedURL
+                              };
+                              
+                              console.log("🚀 Navigating with state:", navigationState);
+                              console.log("🚀 Original URL length:", photo.photoURL.length);
+                              console.log("🚀 Staged URL length:", stagedURL?.length || 0);
+                              
+                              navigate('/photo', { state: navigationState });
 
-                          // TODO: will have to fetch the staged URL from backend
-                      }}
-                      key={photo.photoURL}
-                      // Optionally add margin for extra separation
-                      // m={2}
-                  >
-                      <Card.Body p={0} w="100%" h="250px">
-                          <Image
-                              src={photo.photoURL}
-                              alt="Photo"
-                              width="100%"
-                              height="100%"
-                              objectFit="cover"
-                              display="block"
-                          />
-                      </Card.Body>
-                  </Card.Root>
-                ))}
-            </SimpleGrid>
+                              // TODO: will have to fetch the staged URL from backend
+                          }}
+                          key={photo.photoURL}
+                          // Optionally add margin for extra separation
+                          // m={2}
+                      >
+                          <Card.Body p={0} w="100%" h="250px">
+                              <Image
+                                  src={photo.photoURL}
+                                  alt="Photo"
+                                  width="100%"
+                                  height="100%"
+                                  objectFit="cover"
+                                  display="block"
+                              />
+                          </Card.Body>
+                      </Card.Root>
+                    ))}
+                </SimpleGrid>
+                ) : (
+                  <Box display="flex" justifyContent="center" alignItems="center" h="100%" pb={10}>
+                    <Text>No photos found</Text>
+                  </Box>
+                )
+              }
+            </Box>
         </Box>
     );
 }
