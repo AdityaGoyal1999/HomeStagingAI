@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Flex, VStack, Text, IconButton, Avatar, Button } from "@chakra-ui/react";
 import { handleLogout } from "../auth/authentication";
-import { FiHome, FiImage, FiUser, FiSettings } from "react-icons/fi";
+import { FiHome, FiImage, FiUser, FiSettings, FiCreditCard } from "react-icons/fi";
 import { MdExitToApp } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 // import { auth } from "../firebase";
@@ -13,6 +13,7 @@ const navItems = [
   // { label: "Photos", icon: FiImage, path: "/photo" },
   { label: "Profile", icon: FiUser, path: "/home/profile" },
   { label: "Settings", icon: FiSettings, path: "/home/settings" },
+  { label: "Payment History", icon: FiCreditCard, path: "/home/paymentHistory" },
 ];
 
 export default function Sidebar() {
@@ -28,7 +29,8 @@ export default function Sidebar() {
       direction="column"
       justify="space-between"
       align="center"
-      bg="rgba(255,255,255,0.2)"
+      // bg="rgba(255,255,255,0.2)"
+      backgroundColor="white"
       boxShadow="xl"
       width={isCollapsed ? "60px" : { base: "60px", md: "220px" }}
       position="fixed"
@@ -48,7 +50,13 @@ export default function Sidebar() {
       borderRadius="2xl"
     >
       {/* Top: Logo/App Name */}
-      <Box mb={8} w="full" textAlign="center" cursor="pointer" onClick={handleCollapse}>
+      <Box 
+        mb={8} 
+        w="full" 
+        textAlign="center" 
+        // cursor="pointer" 
+        // onClick={handleCollapse}
+        >
         <Text
           fontWeight="bold"
           fontSize="2xl"

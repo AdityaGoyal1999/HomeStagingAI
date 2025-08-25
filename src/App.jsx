@@ -12,6 +12,7 @@ import HomeContent from "./components/HomeContent"
 import Profile from "./components/Profile"
 import PaymentSuccess from "./components/PaymentSuccess"
 import PaymentCancelled from "./components/PaymentCancelled"
+import PaymentHistory from "./page/PaymentHistory"
 
 function App() {
 
@@ -37,6 +38,7 @@ function App() {
           <Route index element={<HomeContent />} />
           <Route path="settings" element={<Settings />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="paymentHistory" element={<PaymentHistory />} />
         </Route>
         <Route path="/photo" element={user? <Page />: <Navigate to="/" />} />
         
