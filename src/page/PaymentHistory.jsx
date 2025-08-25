@@ -5,7 +5,7 @@ export default function PaymentHistory() {
         <Box>
             <Heading>Payment History</Heading>
 
-            <Text>!This page is under construction</Text>
+            <Text mt={8}>⚠️ This page is under construction</Text>
         </Box>
     )
 }
