@@ -85,9 +85,10 @@ export default function HomeContent() {
     const [selectedStyle, setSelectedStyle] = useState("");
     const { photos, setPhotos } = useOutletContext();
     const [fileUploading, setFileUploading] = useState(false);
+    const { user } = useOutletContext();
     const navigate = useNavigate();
-
     // console.log("This is the photos", photos);
+
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -207,80 +208,60 @@ export default function HomeContent() {
                     </Box>
                 </Box>
             )}
-            {/* <Heading size="lg" mb={8} mt={2}>
-                All photos
-            </Heading> */}
-            <Center my={10}>
-              {/* <Dialog.Root placement="center" motionPreset="slide-in-bottom">
-                <Dialog.Trigger asChild>
-                  <Button leftIcon={<HiUpload />} colorScheme="blue">
-                    Upload Photo
-                  </Button>
-                </Dialog.Trigger>
-                <UploadDialog 
-                  handleFileUpload={handleFileUpload}
-                  handleFileChange={handleFileChange}
-                  selectedStyle={selectedStyle}
-                  onStyleChange={handleStyleChange}
-                />
-              </Dialog.Root> */}
-              
-              {/* <Button>Remove sky image</Button> */}
-              <Button
-                onClick={async () => {
-                    try{
-                    // Get the current authenticated user
-                    const userCredential = auth.currentUser;
-                    if (!userCredential) {
-                      console.error("❌ No authenticated user found");
-                      return;
-                    }
-
-                    // Get the ID token for authentication
-                    const token = await userCredential.getIdToken();
-                    
-                    console.log("🔍 Full URL being called:", `${import.meta.env.VITE_BACKEND_BASE_URL}/payment/create-checkout-session`);
-                    console.log("🔍 Backend base URL:", import.meta.env.VITE_BACKEND_BASE_URL);
-                    
-                    const response = await axios.post(`${import.meta.env.VITE_BACKEND_BASE_URL}/payment/create-checkout-session`, {
-                      amount: 1000,
-                      currency: "usd",
-                      description: "Home staging service",
-                      successUrl: `${window.location.origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-                      cancelUrl: `${window.location.origin}/payment-cancelled`,
-                    }, {
-                      headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                      }
-                    });
-                    
-                    console.log("🔍 Payment response:", response.data);
-
-                    // Go the stripe checkout page
-                    if (response.data && response.data.success && response.data.checkoutUrl) {
-                      window.location.href = response.data.checkoutUrl;
-                    }
-                  } catch (error) {
-                    console.error("🔍 Error:", error);
-                  }
-                }}
-              >
-                Payment Button
-              </Button>
-            </Center>
 
             <Box backgroundColor="white" p={4} className="w-full" mb={8} borderRadius="md">
-              <Box display="flex" justifyContent="space-around" alignItems="center">
-                <Heading size="lg" mb={8} mt={2}>Your Credits</Heading>
-              </Box>
-              <Box p={8} justifyContent="space-between">
-                <Progress.Root value={50} max={100}>
+              <Heading size="lg" mt={2}>Your Credits</Heading>
+              <Box p={8} display="flex" justifyContent="space-around" alignItems="center" gap={8}>
+                <Progress.Root value={user?.credits?100-user.credits:0} max={100} w="100%" h="20px" colorPalette="blue">
                   <Progress.Track>
                     <Progress.Range />
                   </Progress.Track>
                 </Progress.Root>
-                <Text>You have 100 credits</Text>
+                <Box display="flex-col" justifyContent="center" alignItems="center">
+                  <Text mb={2}>Remaining: <Text fontWeight="bold">{user?.credits} credits</Text></Text> 
+                  <Button
+                    onClick={async () => {
+                        try{
+                        // Get the current authenticated user
+                        const userCredential = auth.currentUser;
+                        if (!userCredential) {
+                          console.error("❌ No authenticated user found");
+                          return;
+                        }
+
+                        // Get the ID token for authentication
+                        const token = await userCredential.getIdToken();
+                        
+                        console.log("🔍 Full URL being called:", `${import.meta.env.VITE_BACKEND_BASE_URL}/payment/create-checkout-session`);
+                        console.log("🔍 Backend base URL:", import.meta.env.VITE_BACKEND_BASE_URL);
+                        
+                        const response = await axios.post(`${import.meta.env.VITE_BACKEND_BASE_URL}/payment/create-checkout-session`, {
+                          amount: 1000,
+                          currency: "usd",
+                          description: "Home staging service",
+                          successUrl: `${window.location.origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+                          cancelUrl: `${window.location.origin}/payment-cancelled`,
+                        }, {
+                          headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                          }
+                        });
+                        
+                        console.log("🔍 Payment response:", response.data);
+
+                        // Go the stripe checkout page
+                        if (response.data && response.data.success && response.data.checkoutUrl) {
+                          window.location.href = response.data.checkoutUrl;
+                        }
+                      } catch (error) {
+                        console.error("🔍 Error:", error);
+                      }
+                    }}
+                  >
+                    Buy Credits
+                  </Button>
+                </Box>
               </Box>
             </Box>
             
