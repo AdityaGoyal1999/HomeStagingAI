@@ -40,15 +40,15 @@ app.use((req, res, next) => {
     req.body = req.rawBody;
     
     // Convert rawHeaders to headers for Stripe signature verification
-    if (req.rawHeaders && !req.headers['stripe-signature']) {
-      for (let i = 0; i < req.rawHeaders.length; i += 2) {
-        const key = req.rawHeaders[i].toLowerCase();
-        const value = req.rawHeaders[i + 1];
-        req.headers[key] = value;
-      }
-      console.log("🔍 Headers converted from rawHeaders");
-      console.log("🔍 Stripe signature found:", !!req.headers['stripe-signature']);
-    }
+    // if (req.rawHeaders && !req.headers['stripe-signature']) {
+    //   for (let i = 0; i < req.rawHeaders.length; i += 2) {
+    //     const key = req.rawHeaders[i].toLowerCase();
+    //     const value = req.rawHeaders[i + 1];
+    //     req.headers[key] = value;
+    //   }
+    //   console.log("🔍 Headers converted from rawHeaders");
+    //   console.log("🔍 Stripe signature found:", !!req.headers['stripe-signature']);
+    // }
     
     console.log("🔍 CORS middleware - Body is Buffer:", req.body instanceof Buffer);
   }
