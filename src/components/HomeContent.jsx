@@ -211,7 +211,7 @@ export default function HomeContent() {
                 All photos
             </Heading> */}
             <Center my={10}>
-              <Dialog.Root placement="center" motionPreset="slide-in-bottom">
+              {/* <Dialog.Root placement="center" motionPreset="slide-in-bottom">
                 <Dialog.Trigger asChild>
                   <Button leftIcon={<HiUpload />} colorScheme="blue">
                     Upload Photo
@@ -223,7 +223,7 @@ export default function HomeContent() {
                   selectedStyle={selectedStyle}
                   onStyleChange={handleStyleChange}
                 />
-              </Dialog.Root>
+              </Dialog.Root> */}
               
               {/* <Button>Remove sky image</Button> */}
               <Button
@@ -291,10 +291,26 @@ export default function HomeContent() {
               p={4} 
               className="w-full" 
               mb={8}>
+              <Box display="flex" justifyContent="space-between" alignItems="center">
               <Heading size="lg" mb={8} mt={2}>Your Photos</Heading>
+
+              <Dialog.Root placement="center" motionPreset="slide-in-bottom">
+                <Dialog.Trigger asChild>
+                  <Button leftIcon={<HiUpload />} colorScheme="blue">
+                    Upload Photo
+                  </Button>
+                </Dialog.Trigger>
+                <UploadDialog 
+                  handleFileUpload={handleFileUpload}
+                  handleFileChange={handleFileChange}
+                  selectedStyle={selectedStyle}
+                  onStyleChange={handleStyleChange}
+                />
+              </Dialog.Root>
+              </Box>
               {
                 photos.length > 0? (
-                <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8} mb={8}>
+                <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} rowGap={8} columnGap={8}>
                     {photos.map((photo) => (
                       
                       <Card.Root
