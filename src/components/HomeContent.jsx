@@ -144,8 +144,11 @@ export default function HomeContent() {
               ]);
                 
                 // Navigate to comparison page with both URLs
-                const originalURL = encodeURIComponent(response.data.original.url);
-                const stagedURL = encodeURIComponent(response.data.staged.url);
+                // const originalURL = encodeURIComponent(response.data.original.url);
+                // const stagedURL = encodeURIComponent(response.data.staged.url);
+                const originalURL = response.data.original.url;
+                const stagedURL = response.data.staged.url;
+                
                 navigate(`/photo`, {
                   state: {
                     originalURL: originalURL,

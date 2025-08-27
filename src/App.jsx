@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { auth } from "./firebase"
 import Login from "./page/Login"
 import Home from "./page/Home"
-import Page from "./page/page"
+import PhotoPage from "./page/PhotoPage"
 import LandingPage from "./page/LandingPage"
 import Settings from "./components/Settings"
 import HomeContent from "./components/HomeContent"
@@ -41,7 +41,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="paymentHistory" element={<PaymentHistory />} />
         </Route>
-        <Route path="/photo" element={user? <Page />: <Navigate to="/" />} />
+        <Route path="/photo" element={user? <PhotoPage />: <Navigate to="/" />} />
         
         {/* Payment Result Routes */}
         <Route path="/payment-success" element={user? <PaymentSuccess />: <Navigate to="/" />} />
