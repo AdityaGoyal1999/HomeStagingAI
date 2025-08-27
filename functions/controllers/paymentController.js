@@ -245,6 +245,70 @@ class PaymentController {
   }
 
   /**
+   * Get transactions for the authenticated user
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   */
+  async getTransactions(req, res) {
+    try {
+      const userId = req.user.uid; // From JWT token
+      
+      if (!userId) {
+        return res.status(400).json({
+          success: false,
+          error: 'User ID is required'
+        });
+      }
+
+      console.log(`🔍 Fetching transactions for user: ${userId}`);
+      
+      // Get user's Stripe ID from the database
+      const UserService = require('../services/userService');
+      const userService = new UserService();
+      
+      const user = await userService.getUserProfile(userId);
+      const stripeId = user?.stripeId;
+      
+      if (!stripeId) {
+        // User has no transactions yet
+        return res.json({
+          success: true,
+          transactions: [],
+          message: 'No transactions found'
+        });
+      }
+
+      // Get the Stripe checkout session details
+      const session = await stripe.checkout.sessions.retrieve(stripeId);
+      
+      // Format the transaction data
+      const transaction = {
+        id: session.id,
+        amount: session.amount_total,
+        currency: session.currency,
+        status: session.payment_status,
+        customerEmail: session.customer_details?.email,
+        createdAt: new Date(session.created * 1000).toISOString(),
+        description: session.description || 'Home staging service'
+      };
+
+      res.json({
+        success: true,
+        transactions: [transaction],
+        userId: userId
+      });
+      
+    } catch (error) {
+      console.error('❌ Error getting user transactions:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to get transactions',
+        message: error.message 
+      });
+    }
+  }
+
+  /**
    * Get payment status from Stripe
    * @param {Object} req - Express request object
    * @param {Object} res - Express response object

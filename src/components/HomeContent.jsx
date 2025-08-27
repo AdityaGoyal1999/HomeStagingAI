@@ -148,7 +148,6 @@ export default function HomeContent() {
                 // const stagedURL = encodeURIComponent(response.data.staged.url);
                 const originalURL = response.data.original.url;
                 const stagedURL = response.data.staged.url;
-                
                 navigate(`/photo`, {
                   state: {
                     originalURL: originalURL,

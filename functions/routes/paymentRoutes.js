@@ -44,6 +44,15 @@ router.get('/status/:sessionId', authenticate, async (req, res) => {
   }
 });
 
+router.get('/transactions', authenticate, async (req, res) => {
+  try {
+    await paymentController.getTransactions(req, res);
+  } catch (error) {
+    console.error('Error in transactions route:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Route to get all payments (admin purposes)
 router.get('/all', authenticate, async (req, res) => {
   try {
