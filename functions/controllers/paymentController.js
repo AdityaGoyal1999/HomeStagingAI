@@ -114,7 +114,8 @@ class PaymentController {
         await this.addCreditsToUser(session);
 
         // console.log("🔍 Event FOUND HERE:", event.data.object.id);
-        const stripeId = event.data.object.id;
+        console.log("🔍 Event FOUND HERE:", event.data.object);
+        const stripeId = event.data.object.customer;
         await this.addStripeIdToUser(session, stripeId);
         
         console.log("🔍 checkout.session.completed processing complete");
@@ -274,28 +275,43 @@ class PaymentController {
         return res.json({
           success: true,
           transactions: [],
-          message: 'No transactions found'
+          message: 'No Stripe ID found for user'
         });
       }
 
-      // Get the Stripe checkout session details
-      const session = await stripe.checkout.sessions.retrieve(stripeId);
+      // // Get the Stripe checkout session to find the customer ID
+      // const session = await stripe.checkout.sessions.retrieve(stripeId);
+      // const customerId = session.customer;
       
-      // Format the transaction data
-      const transaction = {
-        id: session.id,
-        amount: session.amount_total,
-        currency: session.currency,
-        status: session.payment_status,
-        customerEmail: session.customer_details?.email,
-        createdAt: new Date(session.created * 1000).toISOString(),
-        description: session.description || 'Home staging service'
-      };
+      // if (!customerId) {
+      //   return res.json({
+      //     success: true,
+      //     transactions: [],
+      //     message: 'No customer ID found'
+      //   });
+      // }
 
+      console.log(`🔍 Trying to get charges for user: ${stripeId}`);
+      const stripeCharges = await stripe.charges.list({
+        customer: stripeId
+      });
+
+      console.log(`🔍 Stripe charges:`, stripeCharges);
+
+      const transactions = stripeCharges.data.map(charge => ({
+        id: charge.id,
+        amount: charge.amount,
+        currency: charge.currency,
+        status: charge.status,
+        created: new Date(charge.created * 1000).toISOString(), // unix → JS date
+        customerEmail: charge.customer_details?.email,
+        description: charge.description || 'Home staging service'
+      }));
       res.json({
         success: true,
-        transactions: [transaction],
-        userId: userId
+        transactions: transactions,
+        userId: userId,
+        totalTransactions: transactions.length
       });
       
     } catch (error) {
