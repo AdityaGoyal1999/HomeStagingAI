@@ -65,6 +65,21 @@ class UserService {
       throw new Error(`Failed to create user: ${error.message}`);
     }
   }
+
+  /**
+   * Add Stripe session ID to user document for payment tracking
+   * @param {string} userId - User ID
+   * @param {string} stripeSessionId - Stripe checkout session ID
+   * @returns {boolean} - True if added, false if already exists
+   */
+  async addStripeIdToUser(userId, stripeSessionId) {
+    try {
+      const result = await this.userModel.addStripeIdToUser(userId, stripeSessionId);
+      return result;
+    } catch (error) {
+      throw new Error(`Failed to add Stripe ID to user: ${error.message}`);
+    }
+  }
 }
 
 module.exports = UserService; 

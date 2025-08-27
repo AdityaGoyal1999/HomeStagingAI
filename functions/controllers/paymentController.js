@@ -101,6 +101,7 @@ class PaymentController {
     console.log("🔍 About to handle event...");
 
     // Handle the event
+    
     switch (event.type) {
       case 'checkout.session.completed':
         console.log("🔍 Processing checkout.session.completed...");
@@ -111,6 +112,10 @@ class PaymentController {
         
         // Add credits to user - checkout.session.completed means payment was successful
         await this.addCreditsToUser(session);
+
+        // console.log("🔍 Event FOUND HERE:", event.data.object.id);
+        const stripeId = event.data.object.id;
+        await this.addStripeIdToUser(session, stripeId);
         
         console.log("🔍 checkout.session.completed processing complete");
         break;
@@ -198,6 +203,42 @@ class PaymentController {
       
     } catch (error) {
       console.error('❌ Error adding credits to user:', error);
+      console.error('❌ Error stack:', error.stack);
+      // Don't throw error to avoid webhook failure
+    }
+  }
+
+  /**
+   * Add Stripe event ID to user document for tracking
+   * @param {Object} session - Stripe checkout session object
+   */
+  async addStripeIdToUser(session, stripeId) {
+    try {
+      const userId = session.metadata?.userId;
+      
+      if (!userId) {
+        console.error('❌ No userId found in session metadata for addStripeIdToUser:', session.id);
+        return;
+      }
+
+      console.log(`🔍 Adding Stripe ID to user: ${userId}`);
+      console.log(`🔍 Stripe session ID:`, stripeId);
+      
+      // Import UserService to manage user data
+      const UserService = require('../services/userService');
+      const userService = new UserService();
+      
+      // Add Stripe session ID to user document
+      const result = await userService.addStripeIdToUser(userId, stripeId);
+      
+      if (result) {
+        console.log(`✅ Successfully added Stripe ID ${session.id} to user ${userId}`);
+      } else {
+        console.log(`⚠️ Stripe ID ${session.id} already exists for user ${userId}`);
+      }
+      
+    } catch (error) {
+      console.error('❌ Error adding Stripe ID to user:', error);
       console.error('❌ Error stack:', error.stack);
       // Don't throw error to avoid webhook failure
     }

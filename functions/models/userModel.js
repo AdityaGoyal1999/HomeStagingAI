@@ -115,6 +115,44 @@ class UserModel {
     await userRef.set({ ...userData, photos }, { merge: true });
     return photos[idx];
   }
+
+  /**
+   * Add Stripe session ID to user document for payment tracking
+   * @param {string} userId - User ID
+   * @param {string} stripeSessionId - Stripe checkout session ID
+   * @returns {boolean} - True if added, false if already exists
+   */
+  async addStripeIdToUser(userId, stripeSessionId) {
+    try {
+      const userRef = this.db.collection(this.collection).doc(userId);
+      const userDoc = await userRef.get();
+      
+      if (!userDoc.exists) {
+        throw new Error('User not found');
+      }
+      
+      const userData = userDoc.data();
+      const existingStripeId = userData.stripeId;
+      
+      // Check if stripeID already exists
+      if (existingStripeId) {
+        return true;
+      }
+      
+      // Add the new Stripe ID as a single string
+      await userRef.update({ 
+        stripeId: stripeSessionId,
+        updatedAt: Timestamp.now()
+      });
+      
+      console.log(`✅ Successfully added Stripe ID ${stripeSessionId} to user ${userId}`);
+      return true;
+      
+    } catch (error) {
+      console.error(`❌ Error in addStripeIdToUser:`, error);
+      throw error;
+    }
+  }
 }
 
 module.exports = UserModel; 
