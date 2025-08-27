@@ -1,7 +1,9 @@
-import { Box, Text, Image, VStack, HStack, Heading, Badge, Tabs } from "@chakra-ui/react";
+import { Box, Text, Image, VStack, HStack, Heading, Badge, Tabs, Button, Icon } from "@chakra-ui/react";
 import { useLocation } from "react-router-dom";
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 import { useEffect, useState } from 'react';
+
+import { MdOutlineFileDownload, MdOutlineSmartToy, MdOutlineDriveFolderUpload } from "react-icons/md";
 
 
 const SliderComponent = ({originalURL, stagedURL}) => {
@@ -11,27 +13,35 @@ const SliderComponent = ({originalURL, stagedURL}) => {
                 itemOne={
                     <Box position="relative">
                         <ReactCompareSliderImage src={originalURL} srcSet={originalURL} alt="Original Image" />
-                        <Text
+                        <Box
                             position="absolute"
                             top="4"
                             left="4"
                             bg="blue.500"
                             color="white"
+                            display="flex"
+                            alignItems="center"
+                            gap={2}
                             px="3"
                             py="1"
                             borderRadius="md"
-                            fontSize="sm"
-                            fontWeight="bold"
                             zIndex="10"
                         >
-                            Original
-                        </Text>
+                            <Icon as={MdOutlineDriveFolderUpload} />
+                            <Text
+                                fontSize="sm"
+                                fontWeight="bold"
+                            >
+                                Original
+                            </Text>
+                    </Box>
                     </Box>
                 }
                 itemTwo={
                     <Box position="relative">
                         <ReactCompareSliderImage src={stagedURL} srcSet={stagedURL} alt="AI Staged Image" />
-                        <Text
+                        
+                        <Box
                             position="absolute"
                             top="4"
                             right="4"
@@ -40,12 +50,16 @@ const SliderComponent = ({originalURL, stagedURL}) => {
                             px="3"
                             py="1"
                             borderRadius="md"
-                            fontSize="sm"
-                            fontWeight="bold"
+                            display="flex"
                             zIndex="10"
+                            alignItems="center"
+                            gap={2}
                         >
-                            AI Staged
-                        </Text>
+                            <Icon as={MdOutlineSmartToy} />
+                            <Text 
+                            fontSize="sm"
+                            fontWeight="bold">AI Staged</Text>
+                        </Box>
                     </Box>
                 }
                 style={{
@@ -98,6 +112,7 @@ const SideBySideComponent = ({originalURL, stagedURL}) => {
         {/* Staged Image */}
         <VStack spacing={4} flex={1}>
             <Badge colorScheme="green" fontSize="md" p={2}>
+                {/* <Icon as={BsStars} /> */}
                 AI Staged
             </Badge>
             <Image 
@@ -148,9 +163,6 @@ export default function PhotoPage() {
                 
                 {originalURL && stagedURL ? (
                     <>
-                        {/* <SliderComponent originalURL={originalURL} stagedURL={stagedURL} />
-
-                        <SideBySideComponent originalURL={originalURL} stagedURL={stagedURL} /> */}
                         <Tabs.Root justify="center" defaultValue="slider">
                             <Tabs.List>
                                 <Tabs.Trigger value="slider">
@@ -169,6 +181,18 @@ export default function PhotoPage() {
                                 <SideBySideComponent originalURL={originalURL} stagedURL={stagedURL} />
                             </Tabs.Content>
                         </Tabs.Root>
+
+                        {/* This will only work until images are public */}
+                        <Button colorPalette="blue" size="lg" mt={4} onClick={() => {
+                            const link = document.createElement('a');
+                            link.href = stagedURL;
+                            link.download = "staged_room.jpg";
+                            document.body.appendChild(link);
+                            link.click();
+                        }}>
+                            <Icon as={MdOutlineFileDownload} />
+                            Download Image
+                        </Button>
                     </>
                 ) : (
                     <VStack spacing={6} align="center">
