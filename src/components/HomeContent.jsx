@@ -23,7 +23,21 @@ const roomStyles = createListCollection({
   ],
 })
 
-const UploadDialog = ({ handleFileUpload, handleFileChange, selectedStyle, onStyleChange }) => {
+const roomTypes = createListCollection({
+  items: [
+    { label: "Living Room", value: "living room" },
+    { label: "Bedroom", value: "bedroom" },
+    { label: "Bathroom", value: "bathroom" },
+    { label: "Kitchen", value: "kitchen" },
+    { label: "Office", value: "office" },
+    { label: "Dining Room", value: "dining room" },
+    { label: "Entryway", value: "entryway" },
+    { label: "Garage", value: "garage" },
+    { label: "Other", value: "other" },
+  ],
+})
+
+const UploadDialog = ({ handleFileUpload, handleFileChange, selectedStyle, onStyleChange, selectedRoomType, onRoomTypeChange }) => {
   return (
     <Portal>
       <Dialog.Backdrop />
@@ -62,6 +76,28 @@ const UploadDialog = ({ handleFileUpload, handleFileChange, selectedStyle, onSty
               </select>
             </Box>
 
+            <Box mb={4}>
+              <Text mb={2} fontSize="sm" fontWeight="medium">Select room type</Text>
+              <select 
+                value={selectedRoomType}
+                onChange={(e) => onRoomTypeChange(e.target.value)}
+                style={{
+                  width: "320px",
+                  padding: "8px 12px",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "6px",
+                  fontSize: "14px"
+                }}
+              >
+                <option value="">Select room type</option>
+                {roomTypes.items.map((roomType) => (
+                  <option key={roomType.value} value={roomType.value}>
+                    {roomType.label}
+                  </option>
+                ))}
+              </select>
+            </Box>
+
             
           </Dialog.Body>
           <Dialog.Footer>
@@ -83,6 +119,8 @@ const UploadDialog = ({ handleFileUpload, handleFileChange, selectedStyle, onSty
 export default function HomeContent() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [selectedStyle, setSelectedStyle] = useState("");
+    const [selectedRoomType, setSelectedRoomType] = useState("");
+
     const { photos, setPhotos } = useOutletContext();
     const [fileUploading, setFileUploading] = useState(false);
     const { user } = useOutletContext();
@@ -98,6 +136,10 @@ export default function HomeContent() {
         setSelectedStyle(value);
     };
 
+    const handleRoomTypeChange = (value) => {
+      setSelectedRoomType(value);
+    };
+
     const handleFileUpload = async () => {
         // console.log(selectedFile);
         if (!selectedFile) {
@@ -107,6 +149,11 @@ export default function HomeContent() {
         if (!selectedStyle) {
             alert("Please select a room style");
             return;
+        }
+
+        if (!selectedRoomType) {
+          alert("Please select a room type");
+          return;
         }
         try {
 
@@ -119,6 +166,7 @@ export default function HomeContent() {
             const formData = new FormData();
             formData.append("photo", selectedFile);
             formData.append("style", selectedStyle);
+            formData.append("roomType", selectedRoomType);
 
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_BASE_URL}/uploadPhoto`, formData, {
                 headers: {
@@ -288,6 +336,8 @@ export default function HomeContent() {
                   handleFileChange={handleFileChange}
                   selectedStyle={selectedStyle}
                   onStyleChange={handleStyleChange}
+                  selectedRoomType={selectedRoomType}
+                  onRoomTypeChange={handleRoomTypeChange}
                 />
               </Dialog.Root>
               </Box>

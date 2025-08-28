@@ -16,31 +16,35 @@ class ReplicateService {
   }
 
   /**
-   * Generate dynamic prompts based on user's selected style
+   * Generate dynamic prompts based on user's selected style and room type
    * @param {string} style - The room style selected by user
-   * @returns {string} - Generated prompt for the specific style
+   * @param {string} roomType - The type of room (living room, bedroom, bathroom, etc.)
+   * @returns {string} - Generated prompt for the specific style and room type
    */
-  generateStyleBasedPrompt(style) {
+  generateStyleBasedPrompt(style, roomType = 'room') {
+    // Normalize room type for consistent formatting
+    const normalizedRoomType = roomType.toLowerCase().replace(/\s+/g, ' ');
+    
     const stylePrompts = {
-      'minimalist': 'Transform this room into a minimalist paradise with clean lines, neutral colors, and uncluttered spaces. Use simple furniture with sleek designs, minimal decor, and plenty of breathing room. Focus on functionality and aesthetic simplicity.',
+      'minimalist': `Transform this ${normalizedRoomType} into a minimalist paradise with clean lines, neutral colors, and uncluttered spaces. Use simple furniture with sleek designs, minimal decor, and plenty of breathing room. Focus on functionality and aesthetic simplicity while maintaining the ${normalizedRoomType}'s purpose.`,
       
-      'scandinavian': 'Convert this room to Scandinavian style with light wood furniture, soft neutral tones, and natural materials. Add cozy textiles, simple geometric patterns, and plenty of natural light. Include plants and organic elements for warmth.',
+      'scandinavian': `Convert this ${normalizedRoomType} to Scandinavian style with light wood furniture, soft neutral tones, and natural materials. Add cozy textiles, simple geometric patterns, and plenty of natural light. Include plants and organic elements for warmth, creating a serene ${normalizedRoomType} atmosphere.`,
       
-      'modern': 'Transform this room into a modern masterpiece with contemporary furniture, bold geometric shapes, and sophisticated color schemes. Use sleek materials like glass, metal, and leather. Add statement lighting and clean, uncluttered spaces.',
+      'modern': `Transform this ${normalizedRoomType} into a modern masterpiece with contemporary furniture, bold geometric shapes, and sophisticated color schemes. Use sleek materials like glass, metal, and leather. Add statement lighting and clean, uncluttered spaces that enhance the ${normalizedRoomType}'s functionality.`,
       
-      'bohemian': 'Convert this room to bohemian style with eclectic furniture, rich textures, and vibrant colors. Layer rugs, add macrame wall hangings, and include vintage pieces. Use plants, candles, and artistic elements for a free-spirited atmosphere.',
+      'bohemian': `Convert this ${normalizedRoomType} to bohemian style with eclectic furniture, rich textures, and vibrant colors. Layer rugs, add macrame wall hangings, and include vintage pieces. Use plants, candles, and artistic elements for a free-spirited ${normalizedRoomType} atmosphere.`,
       
-      'vintage': 'Transform this room with vintage charm using antique furniture, classic patterns, and nostalgic decor. Include retro lighting, vintage textiles, and timeless accessories. Create a warm, inviting space with character and history.',
+      'vintage': `Transform this ${normalizedRoomType} with vintage charm using antique furniture, classic patterns, and nostalgic decor. Include retro lighting, vintage textiles, and timeless accessories. Create a warm, inviting ${normalizedRoomType} with character and history.`,
       
-      'industrial': 'Convert this room to industrial style with exposed brick, metal furniture, and raw materials. Use vintage lighting, distressed wood, and urban elements. Include open shelving and mechanical details for an urban loft feel.',
+      'industrial': `Convert this ${normalizedRoomType} to industrial style with exposed brick, metal furniture, and raw materials. Use vintage lighting, distressed wood, and urban elements. Include open shelving and mechanical details for an urban loft feel in your ${normalizedRoomType}.`,
       
-      'rustic': 'Transform this room with rustic charm using natural wood, stone elements, and earthy colors. Include vintage farmhouse furniture, cozy textiles, and nature-inspired decor. Create a warm, welcoming atmosphere with country appeal.',
+      'rustic': `Transform this ${normalizedRoomType} with rustic charm using natural wood, stone elements, and earthy colors. Include vintage farmhouse furniture, cozy textiles, and nature-inspired decor. Create a warm, welcoming ${normalizedRoomType} atmosphere with country appeal.`,
       
-      'coastal': 'Convert this room to coastal style with light, airy colors, natural textures, and ocean-inspired elements. Use light wood furniture, nautical accents, and breezy fabrics. Include seashells, driftwood, and beach-inspired artwork.',
+      'coastal': `Convert this ${normalizedRoomType} to coastal style with light, airy colors, natural textures, and ocean-inspired elements. Use light wood furniture, nautical accents, and breezy fabrics. Include seashells, driftwood, and beach-inspired artwork for a serene ${normalizedRoomType}.`,
       
-      'tropical': 'Transform this room with tropical vibes using vibrant colors, natural materials, and exotic patterns. Include palm leaf prints, bamboo furniture, and tropical plants. Create a lush, vacation-like atmosphere with bright, energetic elements.',
+      'tropical': `Transform this ${normalizedRoomType} with tropical vibes using vibrant colors, natural materials, and exotic patterns. Include palm leaf prints, bamboo furniture, and tropical plants. Create a lush, vacation-like atmosphere in your ${normalizedRoomType} with bright, energetic elements.`,
       
-      'mid-century-modern': 'Convert this room to mid-century modern style with iconic furniture designs, organic shapes, and retro aesthetics. Use teak wood, bold colors, and geometric patterns. Include vintage lighting and classic mid-century decor elements.'
+      'mid-century-modern': `Convert this ${normalizedRoomType} to mid-century modern style with iconic furniture designs, organic shapes, and retro aesthetics. Use teak wood, bold colors, and geometric patterns. Include vintage lighting and classic mid-century decor elements for a timeless ${normalizedRoomType}.`
     };
 
     // Return the specific style prompt or default to modern if style not found
@@ -107,7 +111,7 @@ class ReplicateService {
     }
   }
 
-  async generateStagedImageFromBuffer(imageBuffer, style = 'modern') {
+  async generateStagedImageFromBuffer(imageBuffer, style = 'modern', roomType = 'living room') {
     try {
       console.log('Starting AI image generation with Replicate using image buffer...');
       
@@ -116,7 +120,7 @@ class ReplicateService {
       const dataURL = `data:image/jpeg;base64,${base64Image}`;
       
       // Generate dynamic prompt based on user's selected style
-      const dynamicPrompt = this.generateStyleBasedPrompt(style);
+      const dynamicPrompt = this.generateStyleBasedPrompt(style, roomType);
       console.log(`🔍 Using prompt for ${style} style:`, dynamicPrompt);
       
       // Using a popular image-to-image model for room staging

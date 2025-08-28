@@ -29,8 +29,9 @@ class PhotoController {
       const userId = req.user.uid;
       const file = req.files[0];
       const style = req.body.style;
+      const roomType = req.body.roomType || 'living room';
 
-      const result = await this.photoService.uploadPhoto(file, userId, style);
+      const result = await this.photoService.uploadPhoto(file, userId, style, roomType);
 
       res.status(200).json({ 
         original: {
