@@ -15,6 +15,38 @@ class ReplicateService {
     });
   }
 
+  /**
+   * Generate dynamic prompts based on user's selected style
+   * @param {string} style - The room style selected by user
+   * @returns {string} - Generated prompt for the specific style
+   */
+  generateStyleBasedPrompt(style) {
+    const stylePrompts = {
+      'minimalist': 'Transform this room into a minimalist paradise with clean lines, neutral colors, and uncluttered spaces. Use simple furniture with sleek designs, minimal decor, and plenty of breathing room. Focus on functionality and aesthetic simplicity.',
+      
+      'scandinavian': 'Convert this room to Scandinavian style with light wood furniture, soft neutral tones, and natural materials. Add cozy textiles, simple geometric patterns, and plenty of natural light. Include plants and organic elements for warmth.',
+      
+      'modern': 'Transform this room into a modern masterpiece with contemporary furniture, bold geometric shapes, and sophisticated color schemes. Use sleek materials like glass, metal, and leather. Add statement lighting and clean, uncluttered spaces.',
+      
+      'bohemian': 'Convert this room to bohemian style with eclectic furniture, rich textures, and vibrant colors. Layer rugs, add macrame wall hangings, and include vintage pieces. Use plants, candles, and artistic elements for a free-spirited atmosphere.',
+      
+      'vintage': 'Transform this room with vintage charm using antique furniture, classic patterns, and nostalgic decor. Include retro lighting, vintage textiles, and timeless accessories. Create a warm, inviting space with character and history.',
+      
+      'industrial': 'Convert this room to industrial style with exposed brick, metal furniture, and raw materials. Use vintage lighting, distressed wood, and urban elements. Include open shelving and mechanical details for an urban loft feel.',
+      
+      'rustic': 'Transform this room with rustic charm using natural wood, stone elements, and earthy colors. Include vintage farmhouse furniture, cozy textiles, and nature-inspired decor. Create a warm, welcoming atmosphere with country appeal.',
+      
+      'coastal': 'Convert this room to coastal style with light, airy colors, natural textures, and ocean-inspired elements. Use light wood furniture, nautical accents, and breezy fabrics. Include seashells, driftwood, and beach-inspired artwork.',
+      
+      'tropical': 'Transform this room with tropical vibes using vibrant colors, natural materials, and exotic patterns. Include palm leaf prints, bamboo furniture, and tropical plants. Create a lush, vacation-like atmosphere with bright, energetic elements.',
+      
+      'mid-century-modern': 'Convert this room to mid-century modern style with iconic furniture designs, organic shapes, and retro aesthetics. Use teak wood, bold colors, and geometric patterns. Include vintage lighting and classic mid-century decor elements.'
+    };
+
+    // Return the specific style prompt or default to modern if style not found
+    return stylePrompts[style.toLowerCase()] || stylePrompts['modern'];
+  }
+
   // Helper method to handle different Replicate output formats
   handleReplicateOutput(output) {
     if (output && typeof output === 'object' && typeof output.url === 'function') {
@@ -44,14 +76,17 @@ class ReplicateService {
     try {
       console.log('Starting AI image generation with Replicate...');
       
+      // Generate dynamic prompt based on user's selected style
+      const dynamicPrompt = this.generateStyleBasedPrompt(style);
+      console.log(`🔍 Using prompt for ${style} style:`, dynamicPrompt);
+      
       // Using a popular image-to-image model for room staging
       // You can experiment with different models based on your needs
       const output = await this.replicate.run(
         "adirik/interior-design:76604baddc85b1b4616e1c6475eca080da339c8875bd4996705440484a6eac38",
         {
           input: {
-            // TODO: Modify the prompt later
-            prompt: `A bedroom with a bohemian spirit centered around a relaxed canopy bed complemented by a large macrame wall hanging. An eclectic dresser serves as a unique storage solution while an array of potted plants brings life and color to the room`,
+            prompt: dynamicPrompt,
             image: imageUrl,
             // strength: 0.7, // Controls how much to transform the original image
             // guidance_scale: 7.5, // Controls how closely to follow the prompt
@@ -80,12 +115,16 @@ class ReplicateService {
       const base64Image = imageBuffer.toString('base64');
       const dataURL = `data:image/jpeg;base64,${base64Image}`;
       
+      // Generate dynamic prompt based on user's selected style
+      const dynamicPrompt = this.generateStyleBasedPrompt(style);
+      console.log(`🔍 Using prompt for ${style} style:`, dynamicPrompt);
+      
       // Using a popular image-to-image model for room staging
       const output = await this.replicate.run(
         "adirik/interior-design:76604baddc85b1b4616e1c6475eca080da339c8875bd4996705440484a6eac38",
         {
           input: {
-            prompt: `A bedroom with a bohemian spirit centered around a relaxed canopy bed complemented by a large macrame wall hanging. An eclectic dresser serves as a unique storage solution while an array of potted plants brings life and color to the room`,
+            prompt: dynamicPrompt,
             image: dataURL,
           }
         }
