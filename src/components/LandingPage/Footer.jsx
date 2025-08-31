@@ -1,4 +1,5 @@
 import { Sparkles } from "lucide-react";
+import logo from "../../assets/logo.png";
 
 const Footer = () => {
   return (
@@ -7,8 +8,16 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="h-8 w-8" />
-              <span className="text-2xl font-bold">StageAI</span>
+              <img src={logo} 
+                alt="StageAI Logo" 
+                className="h-16 w-16 md:h-20 md:w-20 lg:h-24 lg:w-24" 
+                style={{
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                  transform: 'scale(3)' 
+                }}
+              />
+              <span className="text-2xl font-bold" style={{ fontSize: '1rem', fontWeight: 'bold' }}>Home Staging AI</span>
             </div>
             <p className="text-background/80 mb-4 max-w-md">
               Transform empty properties into dream homes with AI-powered virtual staging. 
