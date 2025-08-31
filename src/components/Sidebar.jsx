@@ -6,6 +6,7 @@ import { MdExitToApp } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 // import { auth } from "../firebase";
 import { useAuth } from "../context/AuthContext";
+import logo from "../assets/logo.png";
 // Icons removed
 
 const navItems = [
@@ -54,27 +55,34 @@ export default function Sidebar() {
         mb={8} 
         w="full" 
         textAlign="center" 
-        // cursor="pointer" 
-        // onClick={handleCollapse}
+      >
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
         >
-        <Text
-          fontWeight="bold"
-          fontSize="2xl"
-          color="blue.500"
-          letterSpacing="wide"
-          display={isCollapsed ? "none" : { base: "none", md: "block" }}
-        >
-          HomeStaging AI
-        </Text>
-        <Text
-          fontWeight="bold"
-          fontSize="2xl"
-          color="blue.500"
-          letterSpacing="wide"
-          display={isCollapsed ? "block" : { base: "block", md: "none" }}
-        >
-          HS
-        </Text>
+          <img 
+            src={logo} 
+            alt="StageAI Logo" 
+            className="h-16 w-16 md:h-20 md:w-20 lg:h-24 lg:w-24"
+            style={{
+              objectFit: 'cover',
+              objectPosition: 'center',
+              transform: `${isCollapsed ? "scale(4)" : "scale(3)"}` 
+            }}
+          />
+          <Text
+            fontWeight="bold"
+            fontSize="2xl"
+            color="blue.500"
+            letterSpacing="wide"
+            display={isCollapsed ? "none" : { base: "none", md: "block" }}
+          >
+            Home Staging AI
+          </Text>
+        </Box>
+
       </Box>
 
       {/* Middle: Navigation */}

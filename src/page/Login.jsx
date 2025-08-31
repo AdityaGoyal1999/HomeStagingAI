@@ -3,6 +3,7 @@ import { auth } from "../firebase"
 import { handleLogin, handleSignUp } from "../auth/authentication"
 import { useNavigate } from "react-router-dom"
 import { Button, HStack, Box, Input } from "@chakra-ui/react"
+import logo from "../assets/logo.png"
 
 export default function Login() {
 
@@ -83,9 +84,17 @@ export default function Login() {
                     alignItems="center"
                     justifyContent="center"
                 >
-                    <Box textAlign="center" color="white">
+                    <Box textAlign="center" color="white" display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+                        <img src={logo}
+                         alt="StageAI Logo" className="h-16 w-16 md:h-20 md:w-20 lg:h-24 lg:w-24"
+                         style={{
+                            objectFit: 'cover',
+                            objectPosition: 'center',
+                            transform: 'scale(5)' 
+                         }}
+                        />
                         <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
-                            Home Staging
+                            Home Staging AI
                         </h1>
                         <p style={{ fontSize: '1.2rem', opacity: 0.9 }}>
                             Transform your space with AI-powered home staging
