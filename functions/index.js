@@ -20,7 +20,8 @@ const cors = require("cors")({
     'http://localhost:3000', // React dev server
     'http://127.0.0.1:3000', // Alternative localhost
     'https://homestaging-3aeee.web.app', // Production domain
-    'https://homestaging-3aeee.firebaseapp.com' // Firebase hosting
+    'https://homestaging-3aeee.firebaseapp.com', // Firebase hosting
+    'https://home-staging-ai.vercel.app'
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
