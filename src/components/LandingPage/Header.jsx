@@ -16,7 +16,7 @@ const Header = () => {
         <nav className="hidden md:flex items-center gap-8">
           <a href="#features" className="text-foreground hover:text-primary transition-colors">Features</a>
           <a href="#pricing" className="text-foreground hover:text-primary transition-colors">Pricing</a>
-          <a href="#testimonials" className="text-foreground hover:text-primary transition-colors">Testimonials</a>
+          {/* <a href="#testimonials" className="text-foreground hover:text-primary transition-colors">Testimonials</a> */}
         </nav>
         
         <div className="flex items-center gap-4">

@@ -10,28 +10,28 @@ const features = [
   {
     icon: Palette,
     title: "Multiple Style Options",
-    description: "Choose from 20+ interior design styles including modern, traditional, minimalist, and luxury to match buyer preferences."
+    description: "Choose from dozens of interior design styles including modern, traditional, minimalist, and luxury to match buyer preferences."
   },
   {
     icon: Clock,
     title: "Instant Results",
-    description: "Get professionally staged photos in under 5 minutes. No waiting weeks for physical staging or photographer schedules."
+    description: "Get professionally staged photos in less than 15 seconds. No waiting weeks for physical staging or photographer schedules."
   },
   {
     icon: DollarSign,
     title: "95% Cost Savings",
     description: "Virtual staging costs a fraction of traditional staging while delivering the same sales impact and buyer engagement."
   },
-  {
-    icon: Users,
-    title: "MLS Integration",
-    description: "Seamlessly integrate with your MLS and marketing platforms. Bulk process multiple properties with one click."
-  },
-  {
-    icon: BarChart3,
-    title: "Performance Analytics",
-    description: "Track which staging styles generate the most views, leads, and offers to optimize your marketing strategy."
-  }
+  // {
+  //   icon: Users,
+  //   title: "MLS Integration",
+  //   description: "Seamlessly integrate with your MLS and marketing platforms. Bulk process multiple properties with one click."
+  // },
+  // {
+  //   icon: BarChart3,
+  //   title: "Performance Analytics",
+  //   description: "Track which staging styles generate the most views, leads, and offers to optimize your marketing strategy."
+  // }
 ];
 
 const Features = () => {

@@ -14,7 +14,7 @@ const Footer = () => {
               Transform empty properties into dream homes with AI-powered virtual staging. 
               Sell faster, earn more, and delight your clients.
             </p>
-            <div className="flex gap-4">
+            {/* <div className="flex gap-4">
               <a href="#" className="text-background/60 hover:text-background transition-colors">
                 LinkedIn
               </a>
@@ -24,33 +24,33 @@ const Footer = () => {
               <a href="#" className="text-background/60 hover:text-background transition-colors">
                 Facebook
               </a>
-            </div>
+            </div> */}
           </div>
           
           <div>
-            <h3 className="font-semibold mb-4">Product</h3>
-            <ul className="space-y-2 text-background/80">
+            {/* <h3 className="mb-4" style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>Product</h3> */}
+            {/* <ul className="space-y-2 text-background/80">
               <li><a href="#" className="hover:text-background transition-colors">Features</a></li>
               <li><a href="#" className="hover:text-background transition-colors">Pricing</a></li>
               <li><a href="#" className="hover:text-background transition-colors">API</a></li>
               <li><a href="#" className="hover:text-background transition-colors">Integrations</a></li>
-            </ul>
+            </ul> */}
           </div>
           
           <div>
-            <h3 className="font-semibold mb-4">Support</h3>
+            <h3 className="mb-4" style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>Support</h3>
             <ul className="space-y-2 text-background/80">
-              <li><a href="#" className="hover:text-background transition-colors">Help Center</a></li>
-              <li><a href="#" className="hover:text-background transition-colors">Contact Us</a></li>
-              <li><a href="#" className="hover:text-background transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-background transition-colors">Terms of Service</a></li>
+              {/* <li><a href="mailto:adityagoyaldoon@gmail.com" className="hover:text-background transition-colors">Help Center</a></li> */}
+              <li><a href="mailto:adityagoyaldoon@gmail.com" className="hover:text-background transition-colors">Contact Us</a></li>
+              {/* <li><a href="#" className="hover:text-background transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-background transition-colors">Terms of Service</a></li> */}
             </ul>
           </div>
         </div>
         
         <div className="border-t border-background/20 pt-8 flex flex-col md:flex-row justify-center items-center" style={{ marginTop: '2rem' }}>
           <p className="text-background/60 text-sm">
-            © 2024 StageAI. All rights reserved.
+            © 2025 StageAI. All rights reserved.
           </p>
           <p className="text-background/60 text-sm">
             Made with ❤️ for real estate professionals
